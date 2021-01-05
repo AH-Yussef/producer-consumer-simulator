@@ -37,4 +37,34 @@ public class Simulator {
         //adding product to queues.. waiting on their implementation for testing
     }
     
+
+
+    /*The method found to divide tasks with timers is given in the example below */
+    /*
+    public static void main(String[] args) {
+		Queues queue1 = new Queues();
+		Queues queue2 = new Queues();
+		LinkedList<Queues> fromQueue= new LinkedList<Queues>();
+		fromQueue.add(queue1);
+		LinkedList<Queues> toQueue= new LinkedList<Queues>();
+		toQueue.add(queue2);
+		Machine machine1 = new Machine(fromQueue,toQueue);
+		
+	
+		
+		TimerTask inputRate = new TimerTask() {
+			@Override
+			public void run() {
+				System.out.println("Queue1 size= "+queue1.allProducts.size()+"\nQueue2 size= "+queue2.allProducts.size()+"\nMachine1 contains "+machine1.product.size()+" product");
+					queue1.receiveProduct(new Product());
+			}
+		};
+		Timer timer[] = new Timer[2];
+		timer[0]=new Timer();
+		timer[1]=new Timer();
+		timer[0].schedule(inputRate,0,1000);
+		timer[1].schedule(machine1,0,machine1.getProcessTime());
+		System.out.println(machine1.getProcessTime());
+	}
+    */
 }
