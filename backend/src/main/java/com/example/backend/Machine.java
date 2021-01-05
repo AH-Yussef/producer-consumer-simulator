@@ -50,7 +50,7 @@ public class Machine extends TimerTask{
     /*
     the method that runs with each timer
     if the Machine is empty it just takes a new product from the queue
-    if it already have a product and it's done with it sends it to the queues and takes another one immendiatly
+    if it already have a product and it's done with it sends it to the queues and requests another one immendiatly
     */
 	@Override
 	public void run() {
