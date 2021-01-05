@@ -34,7 +34,7 @@ public class Simulator {
         if(inputTime == 0) inputTime = 1;
     }
     private void addProduct(){
-        //adding product to queues.. waiting on their implementation for testing
+        ///adding product to queues.. waiting on their implementation for testing
     }
     
 

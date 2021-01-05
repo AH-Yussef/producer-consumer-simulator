@@ -8,7 +8,7 @@ public class Queue {
 	/*Queues have no brain, they just store and give products when they are called to 
 	no need to initialize a timer for Queues as Machines does all the work for them
 	the onyl Queue that needs a timer is queue0 as it receives products as input rate and this function should be 
-	initialized in the simulator*/
+	initialized in the simulator***/
     public Product sendProduct(){
         try {
 			return allProducts.take();
