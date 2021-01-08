@@ -2,10 +2,12 @@ package com.example.backend;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Simulator {
     private Queue sourceQueue = new Queue();
-    private int inputTime;
+    private int inputRate;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
 
@@ -16,8 +18,15 @@ public class Simulator {
         final Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
         final Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
 
-        //put machines present in machinesArray into allMachines
+        Timer machinesTimer[] = new Timer[machinesArray.length];
+
+        //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
+            //start timer of each machine
+            machinesTimer[i] = new Timer();
+            machinesTimer[i].scheduleAtFixedRate(machinesArray[i], 0, machinesArray[i].getProcessTime());
+
+            //add each machine to hashmap
             this.allMachines.put(i, machinesArray[i]);
         }
 
@@ -26,15 +35,30 @@ public class Simulator {
             this.allQueues.put(i, queuesArray[i]);
         }
 
-        //put first queue (q0) in sourceQueue
+        //put reference of first queue (q0) in sourceQueue
         this.sourceQueue = queuesArray[0];
 
-        //put random value in inputTime
-        this.inputTime = new Random().nextInt(10);
-        if(inputTime == 0) inputTime = 1;
+        //put random value in inputRate in milliseconds
+        this.inputRate = (new Random().nextInt(5) + 1) * 1000;
+
+        //adding product
+        Timer productTimer = new Timer();
+        TimerTask inputProduct = new TimerTask(){
+
+			@Override
+			public void run() {
+				addProduct();
+			}
+        };
+        productTimer.schedule(inputProduct, 0, inputRate);
     }
+
+    /*
+    * addProduct: adds/creates a new product to source queue each (inputRate)
+    *
+    */
     private void addProduct(){
-        ///adding product to queues.. waiting on their implementation for testing
+        sourceQueue.receiveProduct(new Product());
     }
     
 
