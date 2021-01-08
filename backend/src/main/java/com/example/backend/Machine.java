@@ -7,14 +7,15 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Machine extends TimerTask{
-    private LinkedList<Queue> fromQueue = null;
-	private LinkedList<Queue> toQueue = null;
+    private Queue[] fromQueue = null;
+	private Queue[] toQueue = null;
+	int ID;
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
     private String color = null;
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = (1+new Random().nextInt(6))*1000;
     //At initialization Machine takes her from and to Queues
-	public Machine(LinkedList<Queue> fromQueue,LinkedList<Queue> toQueue){
+	public Machine(Queue[] fromQueue,Queue[] toQueue){
 	    this.fromQueue=fromQueue;
 	    this.toQueue=toQueue;
     }
@@ -55,16 +56,16 @@ public class Machine extends TimerTask{
 	@Override
 	public void run() {
 		if(product.size()==0) {
-			for(int i=0;i<fromQueue.size();i++) {
-				receiveProduct(fromQueue.get(i));
+			for(int i=0;i<fromQueue.length;i++) {
+				receiveProduct(fromQueue[i]);
 				}
 		}
 		else {
-			for(int i=0;i<toQueue.size();i++) {
-				sendProduct(toQueue.get(i));
+			for(int i=0;i<toQueue.length;i++) {
+				sendProduct(toQueue[i]);
 				}
-			for(int i=0;i<fromQueue.size();i++) {
-				receiveProduct(fromQueue.get(i));
+			for(int i=0;i<fromQueue.length;i++) {
+				receiveProduct(fromQueue[i]);
 				}
 		}
 	}

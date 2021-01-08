@@ -6,7 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Simulator {
-    private Queue sourceQueue = new Queue();
+    boolean isSimulationOver=false;
+    private Queue sourceQueue = new Queue(false);
     private int inputRate;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
