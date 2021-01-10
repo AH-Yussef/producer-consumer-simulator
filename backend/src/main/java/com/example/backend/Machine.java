@@ -12,12 +12,12 @@ public class Machine extends TimerTask{
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
     private String color = null;
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
-	private int processTime = (1+new Random().nextInt(6))*1000;
+	private int processTime = 0;
     //At initialization Machine takes her from and to Queues
 	public Machine(int[] fromQueues,int toQueue, int ID){
 		this.ID = ID;
 	    this.fromQueues=fromQueues;
-	    this.toQueue=toQueue;
+		this.toQueue=toQueue;
     }
     //Tries to send the product to all receiver queues (the first empty will get it) Note:needs furthure test
 	public void sendProduct(Queue queue){
@@ -43,10 +43,11 @@ public class Machine extends TimerTask{
 		this.color = color;
 	}
 	public int getProcessTime() {
+		// System.out.println("process time = " + this.processTime);
 		return processTime;
 	}
-	public void setProcessTime(int processTime) {
-		this.processTime = processTime;
+	public void setProcessTime() {
+		this.processTime = (1+new Random().nextInt(6))*1000;
 	}
 	// getter and setter
 	public void setID(int ID){

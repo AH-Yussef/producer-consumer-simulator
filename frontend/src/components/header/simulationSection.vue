@@ -57,10 +57,6 @@ export default {
           jsonMachines: machinesJson,
           jsonQueues: queuesJson,
           numberOfProducts: productsNumber,
-        }},
-        {headers: {
-          'Accept' : 'application/json',
-          'Content-Type': 'text/plain'
         }})
         .catch( (error) => console.log(error));
       }

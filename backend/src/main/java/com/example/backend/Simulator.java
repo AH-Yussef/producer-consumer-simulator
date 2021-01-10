@@ -31,10 +31,9 @@ public class Simulator {
 
     @RequestMapping(
         value = "/startSimulation", 
-        method = RequestMethod.POST,
-        consumes = "text/plain"
+        method = RequestMethod.POST
     )
-    public void startSimulation(@RequestBody String jsonMachines, @RequestBody String jsonQueues, @RequestParam int numberOfProducts){
+    public void startSimulation(@RequestParam String jsonMachines, @RequestParam String jsonQueues, @RequestParam int numberOfProducts){
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;
@@ -47,6 +46,7 @@ public class Simulator {
         for(int i=0; i<machinesArray.length; i++){
             //start timer of each machine
             machinesTimer[i] = new Timer();
+            machinesArray[i].setProcessTime();
             machinesTimer[i].scheduleAtFixedRate(machinesArray[i], 0, machinesArray[i].getProcessTime());
 
             //add each machine to hashmap
