@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.example.backend.componenetsInfo.MachineInfo;
+import com.example.backend.componenetsInfo.QueueInfo;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,10 +39,22 @@ public class Simulator {
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;
-        Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
-        Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
+//        Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
+        Machine[] machinesArray = setupMachines(jsonMachines);
+//        Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
+        Queue[] queuesArray = setupQueues(jsonQueues);
 
         this.machinesTimer = new Timer[machinesArray.length];
+
+        //put queues present in queuesArray into allQueues
+        for(int i=0; i<queuesArray.length; i++){
+            int queueID = queuesArray[i].getID();
+
+            //put reference of first queue (q0) in sourceQueue
+            if(queueID == 0) this.sourceQueue = queuesArray[i];
+
+            this.allQueues.put(queuesArray[i].getID(), queuesArray[i]);
+        }
 
         //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
@@ -51,16 +65,6 @@ public class Simulator {
 
             //add each machine to hashmap
             this.allMachines.put(machinesArray[i].getID(), machinesArray[i]);
-        }
-
-        //put queues present in queuesArray into allQueues
-        for(int i=0; i<queuesArray.length; i++){
-            int queueID = queuesArray[i].getID();
-
-            //put reference of first queue (q0) in sourceQueue
-            if(queueID == 0) this.sourceQueue = queuesArray[i];
-
-            this.allQueues.put(queuesArray[i].getID(), queuesArray[i]);
         }
 
         //put random value in inputRate in milliseconds
@@ -138,7 +142,26 @@ public class Simulator {
         return allMachines.get(ID);
     }
 
-    
+
+
+     //testing
+     public Machine[] setupMachines(String jsonStr){
+	     MachineInfo[] machinesInfo = jsonConverter.jsonToMachineInfo(jsonStr);
+	     Machine[] allMachines = new Machine[machinesInfo.length];
+	     for(int i = 0; i < machinesInfo.length; i++){
+	         allMachines[i] = new Machine(machinesInfo[i].getFromQueues(), machinesInfo[i].getToQueue(), machinesInfo[i].getID());
+         }
+	     return allMachines;
+     }
+
+    public Queue[] setupQueues(String jsonStr){
+        QueueInfo[] queuesInfo = jsonConverter.jsonToQueueInfo(jsonStr);
+        Queue[] allQueues = new Queue[queuesInfo.length];
+        for(int i = 0; i < queuesInfo.length; i++){
+            allQueues[i] = new Queue(queuesInfo[i].isEndQueue(), queuesInfo[i].getID());
+        }
+        return allQueues;
+    }
     
 
 
@@ -170,7 +193,7 @@ public class Simulator {
 		System.out.println(machine1.getProcessTime());
 	}
     */
-    public static void main(String[]args){
-        System.out.println("\"color\" : ");
-    }
+    // public static void main(String[]args){
+    //     System.out.println("\"color\" : ");
+    // }
 }

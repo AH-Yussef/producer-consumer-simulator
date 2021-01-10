@@ -1,5 +1,7 @@
 package com.example.backend;
 
+import com.example.backend.componenetsInfo.MachineInfo;
+import com.example.backend.componenetsInfo.QueueInfo;
 import com.google.gson.Gson;
 
 public class JsonConverter {
@@ -11,4 +13,14 @@ public class JsonConverter {
         Gson gson = new Gson();
         return gson.fromJson(jsonString, Queue[].class);
     }
+
+     public MachineInfo[] jsonToMachineInfo(String jsonStr){
+         Gson gson = new Gson();
+         return gson.fromJson(jsonStr, MachineInfo[].class);
+     }
+
+     public QueueInfo[] jsonToQueueInfo(String jsonStr){
+         Gson gson = new Gson();
+         return gson.fromJson(jsonStr, QueueInfo[].class);
+     }
 }
