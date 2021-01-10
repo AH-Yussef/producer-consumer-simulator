@@ -11,6 +11,7 @@
 
 <script>
 import { mapGetters ,mapActions } from 'vuex';
+import axios from 'axios';
 
 export default {
   name: 'simulation',
@@ -42,9 +43,21 @@ export default {
       if(!this.isValidCircuit()) return;
       this.toggleStartEnd();
       if(!this.start) {
-        this.getQueuesInfo();
-        this.getMachinesInfo();
-        this.getProductsNumber();
+        const queuesJson = this.getQueuesInfo();
+        const machinesJson = this.getMachinesInfo();
+        const productsNumber = this.getProductsNumber();
+
+        console.log(queuesJson);
+        console.log(machinesJson);
+        console.log(productsNumber);
+
+        axios.post('http://localhost:8085//startSimulation', null, 
+        {params :{
+          jsonMachines: machinesJson,
+          jsonQueues: queuesJson,
+          numberOfProducts: productsNumber,
+        }})
+        .catch( (error) => console.log(error));
       }
     },
     isValidCircuit() {
@@ -80,7 +93,7 @@ export default {
         else allQueuesInfo.push(new this.QueueInfo(queue.code, false));
       }
 
-      console.log(JSON.stringify(allQueuesInfo));
+      return JSON.stringify(allQueuesInfo);
     },
     getMachinesInfo() {
       const allMahinesInfo = [];
@@ -93,10 +106,10 @@ export default {
         allMahinesInfo.push(new this.MachinesInfo(machine.code, fromQueuesIds, toQueue))
       }
 
-      console.log(JSON.stringify(allMahinesInfo));
+      return JSON.stringify(allMahinesInfo);
     },
     getProductsNumber() {
-      if(this.productsNumber == "") return 20;
+      if(this.productsNumber == "") this.productsNumber = 20;
       return +this.productsNumber;
     },
     //helper

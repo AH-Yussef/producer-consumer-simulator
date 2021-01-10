@@ -14,4 +14,8 @@ export class StartingQueue extends Queue{
   remove() { //starting queue cannot be deleted
     return; 
   }
+
+  resetConnectionPoints() {
+    this.toConnectionPoint.reset();
+  }
 }

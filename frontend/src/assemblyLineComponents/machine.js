@@ -3,7 +3,7 @@ import store from '../store';
 import { AssemblyLineComponent } from './component.js';
 
 export class Machine extends AssemblyLineComponent{
-  static codeCount = 1;
+  static codeCount = 0;
   static availableCodes = [];
 
   constructor(x, y) {

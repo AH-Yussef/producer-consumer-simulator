@@ -5,6 +5,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@CrossOrigin
 public class Simulator {
     private boolean isSimulationOver=false;
     private int unfinishedProducts = 0;
@@ -25,8 +29,8 @@ public class Simulator {
         return instance;
     }
 
-
-    public void startSimulation(String jsonMachines, String jsonQueues, int numberOfProducts){
+    @PostMapping("/startSimulation")
+    public void startSimulation(@RequestParam String jsonMachines, @RequestParam String jsonQueues, @RequestParam int numberOfProducts){
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;

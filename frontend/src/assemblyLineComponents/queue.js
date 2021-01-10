@@ -3,7 +3,7 @@ import store from '../store';
 import { AssemblyLineComponent } from './component.js';
 
 export class Queue extends AssemblyLineComponent{
-  static codeCount = 1;
+  static codeCount = 0;
   static availableCodes = [];
 
   shiftX = -1.6 * 16;

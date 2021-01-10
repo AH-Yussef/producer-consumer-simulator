@@ -70,10 +70,10 @@ public class Machine extends TimerTask{
 		else {
 			for(int i=0;i<toQueue.length;i++) {
 				sendProduct(toQueue[i]);
-				}
+			}
 			for(int i=0;i<fromQueue.length;i++) {
 				receiveProduct(fromQueue[i]);
-				}
+			}
 		}
 	}
 }
