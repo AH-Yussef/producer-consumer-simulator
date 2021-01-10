@@ -65,6 +65,8 @@ public class Machine extends TimerTask{
 	public void run() {
 		if(product.size()==0) {
 			for(int i=0;i<fromQueues.length;i++) {
+				System.out.println("id: " + i);
+
 				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
 				}
 		}
