@@ -6,7 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Machine extends TimerTask{
-    private int[] fromQueue;
+    private int[] fromQueues;
 	private int toQueue;
 	private int ID;
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
@@ -14,9 +14,9 @@ public class Machine extends TimerTask{
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = (1+new Random().nextInt(6))*1000;
     //At initialization Machine takes her from and to Queues
-	public Machine(int[] fromQueue,int toQueue, int ID){
+	public Machine(int[] fromQueues,int toQueue, int ID){
 		this.ID = ID;
-	    this.fromQueue=fromQueue;
+	    this.fromQueues=fromQueues;
 	    this.toQueue=toQueue;
     }
     //Tries to send the product to all receiver queues (the first empty will get it) Note:needs furthure test
@@ -63,14 +63,14 @@ public class Machine extends TimerTask{
 	@Override
 	public void run() {
 		if(product.size()==0) {
-			for(int i=0;i<fromQueue.length;i++) {
-				receiveProduct(Simulator.getInstance().getQueue(fromQueue[i]));
+			for(int i=0;i<fromQueues.length;i++) {
+				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
 				}
 		}
 		else {
 			sendProduct(Simulator.getInstance().getQueue(toQueue));
-			for(int i=0;i<fromQueue.length;i++) {
-				receiveProduct(Simulator.getInstance().getQueue(fromQueue[i]));
+			for(int i=0;i<fromQueues.length;i++) {
+				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
 			}
 		}
 	}

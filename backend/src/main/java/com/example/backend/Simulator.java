@@ -29,8 +29,12 @@ public class Simulator {
         return instance;
     }
 
-    @PostMapping("/startSimulation")
-    public void startSimulation(@RequestParam String jsonMachines, @RequestParam String jsonQueues, @RequestParam int numberOfProducts){
+    @RequestMapping(
+        value = "/startSimulation", 
+        method = RequestMethod.POST,
+        consumes = "text/plain"
+    )
+    public void startSimulation(@RequestBody String jsonMachines, @RequestBody String jsonQueues, @RequestParam int numberOfProducts){
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;

@@ -50,14 +50,22 @@ export default {
         console.log(queuesJson);
         console.log(machinesJson);
         console.log(productsNumber);
+        document.getElementById("board").style.pointerEvents = 'none';
 
         axios.post('http://localhost:8085//startSimulation', null, 
         {params :{
           jsonMachines: machinesJson,
           jsonQueues: queuesJson,
           numberOfProducts: productsNumber,
+        }},
+        {headers: {
+          'Accept' : 'application/json',
+          'Content-Type': 'text/plain'
         }})
         .catch( (error) => console.log(error));
+      }
+      else {
+        document.getElementById("board").style.pointerEvents = 'auto';
       }
     },
     isValidCircuit() {
@@ -89,6 +97,7 @@ export default {
     getQueuesInfo() {
       const allQueuesInfo = [];
       for(let queue of this.queues.values()) {
+        queue.unselectSelf();
         if(queue.isEndQueue()) allQueuesInfo.push(new this.QueueInfo(queue.code, true));
         else allQueuesInfo.push(new this.QueueInfo(queue.code, false));
       }
@@ -98,6 +107,7 @@ export default {
     getMachinesInfo() {
       const allMahinesInfo = [];
       for(let machine of this.machines.values()) {
+        machine.unselectSelf();
         const fromQueues = machine.fromConnectionPoint.fromComponents.values();
         const fromQueuesIds = [];
         for(let queue of fromQueues) fromQueuesIds.push(queue.code);
