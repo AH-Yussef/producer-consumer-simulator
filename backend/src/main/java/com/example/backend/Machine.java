@@ -6,15 +6,15 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class Machine extends TimerTask{
-    private Queue[] fromQueue = null;
-	private Queue[] toQueue = null;
+    private int[] fromQueue;
+	private int toQueue;
 	private int ID;
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
     private String color = null;
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = (1+new Random().nextInt(6))*1000;
     //At initialization Machine takes her from and to Queues
-	public Machine(Queue[] fromQueue,Queue[] toQueue, int ID){
+	public Machine(int[] fromQueue,int toQueue, int ID){
 		this.ID = ID;
 	    this.fromQueue=fromQueue;
 	    this.toQueue=toQueue;
@@ -64,15 +64,13 @@ public class Machine extends TimerTask{
 	public void run() {
 		if(product.size()==0) {
 			for(int i=0;i<fromQueue.length;i++) {
-				receiveProduct(fromQueue[i]);
+				receiveProduct(Simulator.getInstance().getQueue(fromQueue[i]));
 				}
 		}
 		else {
-			for(int i=0;i<toQueue.length;i++) {
-				sendProduct(toQueue[i]);
-			}
+			sendProduct(Simulator.getInstance().getQueue(toQueue));
 			for(int i=0;i<fromQueue.length;i++) {
-				receiveProduct(fromQueue[i]);
+				receiveProduct(Simulator.getInstance().getQueue(fromQueue[i]));
 			}
 		}
 	}
