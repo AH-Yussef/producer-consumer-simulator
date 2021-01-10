@@ -3,10 +3,10 @@ package com.example.backend;
 import java.util.Random;
 
 public class Product {
-    String color = new String();
+    private String color = new String();
     public Product(){
-        this.color = String.valueOf(new Random().nextInt(255)) + "," + String.valueOf(new Random().nextInt(255)) + "," 
-        + String.valueOf(new Random().nextInt(255));
+        this.color = String.valueOf(1+new Random().nextInt(254)) + "," + String.valueOf(1+new Random().nextInt(254)) + "," 
+        + String.valueOf(1+new Random().nextInt(254));
     }
     public String getColor(){
         return color;

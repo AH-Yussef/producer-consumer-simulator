@@ -1,6 +1,5 @@
 package com.example.backend;
 
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -9,13 +8,14 @@ import java.util.concurrent.BlockingQueue;
 public class Machine extends TimerTask{
     private Queue[] fromQueue = null;
 	private Queue[] toQueue = null;
-	int ID;
+	private int ID;
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
     private String color = null;
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = (1+new Random().nextInt(6))*1000;
     //At initialization Machine takes her from and to Queues
-	public Machine(Queue[] fromQueue,Queue[] toQueue){
+	public Machine(Queue[] fromQueue,Queue[] toQueue, int ID){
+		this.ID = ID;
 	    this.fromQueue=fromQueue;
 	    this.toQueue=toQueue;
     }
@@ -31,7 +31,7 @@ public class Machine extends TimerTask{
 	public void receiveProduct(Queue queue) {
 		try {
 			this.product.put(queue.sendProduct());
-			setColor(this.product.peek().color);
+			setColor(this.product.peek().getColor());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -47,7 +47,14 @@ public class Machine extends TimerTask{
 	}
 	public void setProcessTime(int processTime) {
 		this.processTime = processTime;
-    }
+	}
+	// getter and setter
+	public void setID(int ID){
+		this.ID = ID;
+	}
+	public int getID(){
+		return this.ID;
+	}
     /*
     the method that runs with each timer
     if the Machine is empty it just takes a new product from the queue

@@ -6,20 +6,34 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Simulator {
-    boolean isSimulationOver=false;
-    private Queue sourceQueue = new Queue(false);
+    private boolean isSimulationOver=false;
+    private int unfinishedProducts = 0;
+    private int numberOfProducts;
+    private Queue sourceQueue;
     private int inputRate;
+    private Timer[] machinesTimer;
+    private Timer productTimer;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
 
     JsonConverter jsonConverter = new JsonConverter();
+    // Singleton
+    private static Simulator instance;
+    private Simulator(){}
+    public static Simulator getInstance(){
+        if(instance == null) instance = new Simulator();
+        return instance;
+    }
 
-    public Simulator(String jsonMachines, String jsonQueues){
+
+    public void startSimulation(String jsonMachines, String jsonQueues, int numberOfProducts){
         //take the json strings and convert them to array of java objects
-        final Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
-        final Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
+        this.numberOfProducts = numberOfProducts;
+        this.unfinishedProducts = numberOfProducts;
+        Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
+        Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
 
-        Timer machinesTimer[] = new Timer[machinesArray.length];
+        this.machinesTimer = new Timer[machinesArray.length];
 
         //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
@@ -28,39 +42,95 @@ public class Simulator {
             machinesTimer[i].scheduleAtFixedRate(machinesArray[i], 0, machinesArray[i].getProcessTime());
 
             //add each machine to hashmap
-            this.allMachines.put(i, machinesArray[i]);
+            this.allMachines.put(machinesArray[i].getID(), machinesArray[i]);
         }
 
         //put queues present in queuesArray into allQueues
         for(int i=0; i<queuesArray.length; i++){
-            this.allQueues.put(i, queuesArray[i]);
-        }
+            int queueID = queuesArray[i].getID();
 
-        //put reference of first queue (q0) in sourceQueue
-        this.sourceQueue = queuesArray[0];
+            //put reference of first queue (q0) in sourceQueue
+            if(queueID == 0) this.sourceQueue = queuesArray[i];
+
+            this.allQueues.put(queuesArray[i].getID(), queuesArray[i]);
+        }
 
         //put random value in inputRate in milliseconds
         this.inputRate = (new Random().nextInt(5) + 1) * 1000;
 
         //adding product
-        Timer productTimer = new Timer();
-        TimerTask inputProduct = new TimerTask(){
+        addProduct();
+    }
 
+    private String getAllMachines(){
+        String jsonMachines = "[";
+        for(HashMap.Entry<Integer, Machine> mapElement : allMachines.entrySet()){
+            jsonMachines += "\n{\"ID\" : " + String.valueOf(mapElement.getKey()) + ",\n";
+            jsonMachines += "\"color\" : " + mapElement.getValue().getColor() + "},";
+        }
+        jsonMachines = jsonMachines.substring(0, jsonMachines.length()-1) + "]";
+        //before returning we will add here the MEMENTO to save the current image
+
+        //
+        return jsonMachines;
+    }
+
+    private int getNumberOfProducts(){
+        return this.numberOfProducts;
+    }
+    private boolean getIsSimulationOver(){
+        return this.isSimulationOver;
+    }
+    /*
+    * addProduct: adds/creates a new product to source queue each (inputRate)
+    * keeps running until numberOfProducts reaches 0 then stops the thread
+    */
+    private void addProduct(){
+        this.productTimer = new Timer();
+        TimerTask inputProduct = new TimerTask(){
 			@Override
 			public void run() {
-				addProduct();
+				if(numberOfProducts > 0){
+                    sourceQueue.receiveProduct(new Product());
+                    numberOfProducts--;
+                }
+                else{
+                    productTimer.cancel();
+                }
 			}
         };
         productTimer.schedule(inputProduct, 0, inputRate);
     }
 
     /*
-    * addProduct: adds/creates a new product to source queue each (inputRate)
-    *
+    * when a product reaches the ending queue this queue is called
+    * when the number of unfinishedProducts inside reaches 0
+    * this means the simulation is over and stops all machines threads
     */
-    private void addProduct(){
-        sourceQueue.receiveProduct(new Product());
+	public void addFinishedProduct() {
+        this.unfinishedProducts++;
+        if(unfinishedProducts == 0){
+            stopAllThreads(this.machinesTimer);
+            isSimulationOver = true;
+        }
     }
+    
+    // stops all machine threads
+    private void stopAllThreads(Timer[]threads){
+        for(Timer thread : threads) thread.cancel();
+    }
+
+    // getting a particular queue object
+    public Queue getQueue(int ID){
+        return allQueues.get(ID);
+    }
+
+    // getting a particular machine object
+    public Machine getMachine(int ID){
+        return allMachines.get(ID);
+    }
+
+    
     
 
 
@@ -92,4 +162,7 @@ public class Simulator {
 		System.out.println(machine1.getProcessTime());
 	}
     */
+    public static void main(String[]args){
+        System.out.println("\"color\" : ");
+    }
 }
