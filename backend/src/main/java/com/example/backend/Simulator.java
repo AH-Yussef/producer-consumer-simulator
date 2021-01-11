@@ -81,6 +81,18 @@ public class Simulator {
         //
         return jsonMachines;
     }
+    public String getAllQueues(){
+        String jsonQueues = "[";
+        for(HashMap.Entry<Integer, Queue> mapElement : allQueues.entrySet()){
+            jsonQueues += "\n{\"id\" : " + String.valueOf(mapElement.getKey()) + ",\n";
+            jsonQueues += "\"numberOfProducts\" : "+ mapElement.getValue().getNumberOfProducts() + "},";
+        }
+        jsonQueues = jsonQueues.substring(0, jsonQueues.length()-1) + "\n]";
+        //before returning we will add here the MEMENTO to save the current image
+
+        //
+        return jsonQueues;
+    }
 
     public int getNumberOfProducts(){
         return this.numberOfProducts;
