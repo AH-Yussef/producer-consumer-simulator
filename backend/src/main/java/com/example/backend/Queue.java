@@ -38,5 +38,8 @@ public class Queue {
 		if(isEndQueue){
 			Simulator.getInstance().addFinishedProduct();
 		}
-    }
+	}
+	public int getNumberOfProducts(){
+		return allProducts.size();
+	}
 }
