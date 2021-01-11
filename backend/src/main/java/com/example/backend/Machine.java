@@ -10,7 +10,7 @@ public class Machine extends TimerTask{
 	private int toQueue;
 	private int ID;
 	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
-    private String color = null;
+    private String color = "rgb(187,143,206)";
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = 0;
     //At initialization Machine takes her from and to Queues

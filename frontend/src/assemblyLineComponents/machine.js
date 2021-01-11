@@ -10,7 +10,7 @@ export class Machine extends AssemblyLineComponent{
     super(x, y);
     this.code = this._generateCode();
     this.isMachine = true;
-    this.fillColor = "#BB8FCE";
+    this.fillColor = "rgb(187,143,206)";
     this._create();
     this._addEventListeners();
   }
@@ -31,7 +31,7 @@ export class Machine extends AssemblyLineComponent{
     gsap.set(newMachineLabel, {
       attr: {
         x: this.center.x, y: this.center.y, "text-anchor": "middle", 
-        fill: "black", "font-size": "medium", dy: "0.4rem",
+        fill: "white", "font-size": "medium", dy: "0.4rem",
       },
       css: {
         userSelect: 'none', pointerEvents: 'none',
@@ -58,7 +58,12 @@ export class Machine extends AssemblyLineComponent{
   }
 
   updateFillColor(rgbColor) {
+    this.fillColor = rgbColor;
     this.component.setAttribute("fill", rgbColor);
+  }
+  resetColor() {
+    this.fillColor = "rgb(187,143,206)";
+    this.component.setAttribute("fill", this.fillColor);
   }
 
   remove() {
@@ -100,5 +105,21 @@ export class Machine extends AssemblyLineComponent{
       this.setSelfAsSelected();
     }
     this.component.onmouseup = () => this._moveMouseUpHandling();
+  }
+
+  flash(rgbColor){
+    const flasher = setInterval(() => {
+      this.component.setAttribute("stroke", rgbColor);
+      this.component.setAttribute("stroke-width", '8px');
+
+      setTimeout(() => {
+        this.component.setAttribute("stroke", "black");
+        this.component.setAttribute("stroke-width", '2px');
+      }, 150);
+    }, 300);
+
+    setTimeout(function( ) { 
+      clearInterval( flasher ); 
+    }, 1000);
   }
 }

@@ -11,6 +11,11 @@ public class Api {
         Simulator.getInstance().startSimulation(jsonMachines, jsonQueues, numberOfProducts);
     }
 
+    @PostMapping("/resetSimulator")
+    public void resetSimulator(){
+        Simulator.getInstance().reset();
+    }
+
     @GetMapping("/getCurrentImage")
     public String getCurrentImage() {
         return Simulator.getInstance().getAllMachines();

@@ -2,7 +2,7 @@
   <div id="simulation">
     <div id="num-label">Number of products</div>
     <input type="number" id="products-input" placeholder="20" v-model="productsNumber">
-    <div id="start-end-btn" :class="['sim-btn', setStartEndBtn()]" @click="startSimulation()">{{startEndBtnText}}</div>
+    <div id="start-end-btn" :class="['sim-btn', setStartEndBtn()]" @click="TriggerSimulation()">{{startEndBtnText}}</div>
     <div id="replay-btn" :class="['sim-btn', 'hidden']">
       replay
     </div>
@@ -40,7 +40,7 @@ export default {
         return "start-btn";
       }
     },
-    startSimulation() {
+    TriggerSimulation() {
       if(!this.isValidCircuit()) return;
       this.toggleStartEnd();
       if(!this.start) {
@@ -48,12 +48,18 @@ export default {
         const machinesJson = this.getMachinesInfo();
         const productsNumber = this.getProductsNumber();
 
-        console.log(queuesJson);
-        console.log(machinesJson);
-        console.log(productsNumber);
+        this.disableInput();
         document.getElementById("board").style.pointerEvents = 'none';
 
-        axios.post('http://localhost:8085//startSimulation', null, 
+        this.startSimulation(machinesJson, queuesJson, productsNumber);
+      }
+      else {
+        this.endSimulation();
+      }
+    },
+    //requests helper methods
+    startSimulation(machinesJson, queuesJson, productsNumber) {
+      axios.post('http://localhost:8085//startSimulation', null, 
         {params :{
           jsonMachines: machinesJson,
           jsonQueues: queuesJson,
@@ -61,33 +67,33 @@ export default {
         }})
         .then( () => {
           const tracker = setInterval(() => {
-            this.isSimulationOver();
             if(this.simulationFinished) {
               clearInterval(tracker);
               this.simulationFinished = false;
             }
+            else this.isSimulationOver();
           }, 1000);
         })
         .catch( (error) => console.log(error));
-      }
-      else {
-        document.getElementById("board").style.pointerEvents = 'auto';
-      }
     },
-    //requests helper methods
     isSimulationOver() {
       axios.get('http://localhost:8085//isSimulationFinished')
       .then( (response) => {
         const isSimulationFinished = response.data;
-        console.log(isSimulationFinished);
-        if(isSimulationFinished) this.simulationFinished = true;
-        else this.refreshCircuit();
+        if(isSimulationFinished) {
+          this.endSimulation();
+          this.toggleStartEnd()
+        }
+        else {
+          this.getCurrentProductNum();
+          this.refreshCircuit();
+        }
       })
       .catch( (error) => console.log(error));
     },
     refreshCircuit() {
       axios.get('http://localhost:8085//getCurrentImage')
-      .then( (response) => console.log(response.data))
+      .then( (response) => this.updateMachines(response.data))
       .catch( (error) => console.log(error));
     },
     getCurrentProductNum() {
@@ -97,7 +103,30 @@ export default {
       })
       .catch( (error) => console.log(error));
     },
-    ////////
+    endSimulation() {
+      this.simulationFinished = true;
+      document.getElementById("board").style.pointerEvents = 'auto';
+      this.productsNumber = 20;
+      this.enableInput();
+      this.resetAllMachines();
+    },
+    resetAllMachines() {
+      for(let machine of this.machines.values()){
+        machine.resetColor();
+      }
+    },
+    //parsing machines info
+    updateMachines(machinesInfo) {
+      for(let machine of machinesInfo){
+        const machineId = machine.id;
+        const updatedMachineColor = machine.color;
+        const currentMachine = this.machines.get(machineId);
+
+        const oldColor = currentMachine.fillColor;
+        currentMachine.updateFillColor(updatedMachineColor);
+        if(oldColor != updatedMachineColor) currentMachine.flash(oldColor)
+      }
+    },
     isValidCircuit() {
       // any queue except the starting queue must have a least one input
       for(let queue of this.queues.values()) {
@@ -151,6 +180,12 @@ export default {
     getProductsNumber() {
       if(this.productsNumber == "") this.productsNumber = 20;
       return Math.trunc(+this.productsNumber);
+    },
+    disableInput() {
+      document.getElementById("products-input").disabled = true;
+    },
+    enableInput() {
+      document.getElementById("products-input").disabled = false;
     },
     //helper
     QueueInfo(id, isEndQueue) {

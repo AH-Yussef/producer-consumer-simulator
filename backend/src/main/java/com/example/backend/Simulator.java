@@ -63,7 +63,7 @@ public class Simulator {
         }
         
         //put random value in inputRate in milliseconds
-        this.inputRate = (new Random().nextInt(5) + 1) * 1000;
+        this.inputRate = (new Random().nextInt(5) + 2) * 1000;
 
         //adding product
         addProduct();
@@ -72,10 +72,10 @@ public class Simulator {
     public String getAllMachines(){
         String jsonMachines = "[";
         for(HashMap.Entry<Integer, Machine> mapElement : allMachines.entrySet()){
-            jsonMachines += "\n{\"ID\" : " + String.valueOf(mapElement.getKey()) + ",\n";
-            jsonMachines += "\"color\" : rgb(" + mapElement.getValue().getColor() + ")},";
+            jsonMachines += "\n{\"id\" : " + String.valueOf(mapElement.getKey()) + ",\n";
+            jsonMachines += "\"color\" : \"rgb(" + mapElement.getValue().getColor() + ")\"},";
         }
-        jsonMachines = jsonMachines.substring(0, jsonMachines.length()-1) + "]";
+        jsonMachines = jsonMachines.substring(0, jsonMachines.length()-1) + "\n]";
         //before returning we will add here the MEMENTO to save the current image
 
         //
@@ -90,10 +90,10 @@ public class Simulator {
     }
     // resetting the simulator to its original state
     public void reset(){
-        stopAllThreads(machinesTimer);
+        if(machinesTimer != null) stopAllThreads(machinesTimer);
         this.allMachines.clear();
         this.allQueues.clear();
-        this.productTimer.cancel();
+        if(productTimer != null) this.productTimer.cancel();
         this.isSimulationOver = false;
         this.presentColors.clear();
     }
