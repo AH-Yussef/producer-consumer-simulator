@@ -38,11 +38,13 @@ export default {
   methods: {
     ...mapActions(['enableDrawingMode', 'disableDrawingMode', 'setComponentType', 'setCurrentComponent', 'resetCurrSelectedComponent']),
     addQueue() {
+      this.selectCursor();
       this.enableDrawingMode();
       this.setComponentType(this.components.queue);
     },
     addMachine() {
-      this.enableDrawingMode();
+      this.selectCursor();
+      this.enableDrawingMode();  
       this.setComponentType(this.components.machine);
     },
     selectCursor() {

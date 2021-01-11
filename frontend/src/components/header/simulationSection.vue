@@ -20,6 +20,7 @@ export default {
       start: true,
       productsNumber: 20,
       startEndBtnText: "start simulation",
+      simulationFinished: false,
     }
   },
   computed: mapGetters(['queues', 'machines', 'getErrorCard']),
@@ -58,12 +59,45 @@ export default {
           jsonQueues: queuesJson,
           numberOfProducts: productsNumber,
         }})
+        .then( () => {
+          const tracker = setInterval(() => {
+            this.isSimulationOver();
+            if(this.simulationFinished) {
+              clearInterval(tracker);
+              this.simulationFinished = false;
+            }
+          }, 1000);
+        })
         .catch( (error) => console.log(error));
       }
       else {
         document.getElementById("board").style.pointerEvents = 'auto';
       }
     },
+    //requests helper methods
+    isSimulationOver() {
+      axios.get('http://localhost:8085//isSimulationFinished')
+      .then( (response) => {
+        const isSimulationFinished = response.data;
+        console.log(isSimulationFinished);
+        if(isSimulationFinished) this.simulationFinished = true;
+        else this.refreshCircuit();
+      })
+      .catch( (error) => console.log(error));
+    },
+    refreshCircuit() {
+      axios.get('http://localhost:8085//getCurrentImage')
+      .then( (response) => console.log(response.data))
+      .catch( (error) => console.log(error));
+    },
+    getCurrentProductNum() {
+      axios.get('http://localhost:8085//remainingProducts')
+      .then( (response) => {
+        this.productsNumber = response.data;
+      })
+      .catch( (error) => console.log(error));
+    },
+    ////////
     isValidCircuit() {
       // any queue except the starting queue must have a least one input
       for(let queue of this.queues.values()) {

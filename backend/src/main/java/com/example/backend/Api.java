@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 public class Api {
     @PostMapping("/startSimulation")
     public void startSimulation(@RequestParam String jsonMachines, @RequestParam String jsonQueues, @RequestParam int numberOfProducts){
+        Simulator.getInstance().reset();
         Simulator.getInstance().startSimulation(jsonMachines, jsonQueues, numberOfProducts);
     }
 

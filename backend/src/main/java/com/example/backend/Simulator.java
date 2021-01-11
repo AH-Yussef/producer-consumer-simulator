@@ -73,7 +73,7 @@ public class Simulator {
         String jsonMachines = "[";
         for(HashMap.Entry<Integer, Machine> mapElement : allMachines.entrySet()){
             jsonMachines += "\n{\"ID\" : " + String.valueOf(mapElement.getKey()) + ",\n";
-            jsonMachines += "\"color\" : " + mapElement.getValue().getColor() + "},";
+            jsonMachines += "\"color\" : rgb(" + mapElement.getValue().getColor() + ")},";
         }
         jsonMachines = jsonMachines.substring(0, jsonMachines.length()-1) + "]";
         //before returning we will add here the MEMENTO to save the current image
@@ -89,7 +89,7 @@ public class Simulator {
         return this.isSimulationOver;
     }
     // resetting the simulator to its original state
-    private void reset(){
+    public void reset(){
         stopAllThreads(machinesTimer);
         this.allMachines.clear();
         this.allQueues.clear();
@@ -124,7 +124,7 @@ public class Simulator {
     }
 
     /*
-    * when a product reaches the ending queue this queue is called
+    when a product reaches the ending queue this queue is called
     * when the number of unfinishedProducts inside reaches 0
     * this means the simulation is over and stops all machines threads
     */
