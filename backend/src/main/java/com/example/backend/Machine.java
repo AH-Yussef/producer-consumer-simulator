@@ -18,7 +18,7 @@ public class Machine extends TimerTask{
 		this.ID = ID;
 	    this.fromQueues=fromQueues;
 		this.toQueue=toQueue;
-		this.processTime = (1+new Random().nextInt(6))*1000;
+		this.processTime = (2+new Random().nextInt(6))*1000;
 	}
 	
     //Tries to send the product to all receiver queues (the first empty will get it) Note:needs furthure test

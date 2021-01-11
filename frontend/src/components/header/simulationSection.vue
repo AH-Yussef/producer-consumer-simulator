@@ -116,7 +116,7 @@ export default {
     },
     getProductsNumber() {
       if(this.productsNumber == "") this.productsNumber = 20;
-      return +this.productsNumber;
+      return Math.trunc(+this.productsNumber);
     },
     //helper
     QueueInfo(id, isEndQueue) {

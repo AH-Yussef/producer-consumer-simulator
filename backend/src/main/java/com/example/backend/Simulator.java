@@ -67,7 +67,7 @@ public class Simulator {
         addProduct();
     }
 
-    private String getAllMachines(){
+    public String getAllMachines(){
         String jsonMachines = "[";
         for(HashMap.Entry<Integer, Machine> mapElement : allMachines.entrySet()){
             jsonMachines += "\n{\"ID\" : " + String.valueOf(mapElement.getKey()) + ",\n";
@@ -80,10 +80,10 @@ public class Simulator {
         return jsonMachines;
     }
 
-    private int getNumberOfProducts(){
+    public int getNumberOfProducts(){
         return this.numberOfProducts;
     }
-    private boolean getIsSimulationOver(){
+    public boolean getIsSimulationOver(){
         return this.isSimulationOver;
     }
     /*
@@ -113,7 +113,7 @@ public class Simulator {
     * this means the simulation is over and stops all machines threads
     */
 	public void addFinishedProduct() {
-        this.unfinishedProducts++;
+        this.unfinishedProducts--;
         if(unfinishedProducts == 0){
             stopAllThreads(this.machinesTimer);
             isSimulationOver = true;
