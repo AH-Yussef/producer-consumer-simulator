@@ -8,6 +8,7 @@ export class AssemblyLineComponent {
     this.componentLabel = null,
     this.center = { x: x, y: y };
     this.code = 0;
+    this.width = 0;
 
     this.mouseDown = false;
     this.isMachine = false;

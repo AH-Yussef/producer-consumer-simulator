@@ -1,6 +1,5 @@
 package com.example.backend;
 
-import com.example.BlockingQueue;
 
 public class Queue {
 	BlockingQueue<Product> allProducts = new BlockingQueue<Product>(Integer.MAX_VALUE);

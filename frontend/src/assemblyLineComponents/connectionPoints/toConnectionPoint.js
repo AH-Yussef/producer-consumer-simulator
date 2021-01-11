@@ -8,8 +8,8 @@ export class ToConnectionPoint extends ConnectionPoint{
     this.tempConnector = null;
     this.outConnectors = new Map();
 
-    this._createConnectionWrapper(component.center.y - (1.6*16));
-    this._createConnectionPoint(component.center.x - (1.6*16));
+    this._createConnectionWrapper(component.center.y - ((component.width / 2)*16));
+    this._createConnectionPoint(component.center.x - ((component.width / 2)*16));
     this._addActions();
   }
 
@@ -22,10 +22,10 @@ export class ToConnectionPoint extends ConnectionPoint{
   }
 
   updatePos() {
-    this.connectionPoint.setAttribute("cx", this.componentAttached.center.x - (1.6*16));
+    this.connectionPoint.setAttribute("cx", this.componentAttached.center.x - ((this.componentAttached.width / 2)*16));
     this.connectionPoint.setAttribute("cy", this.componentAttached.center.y);
 
-    this.connectionPointWrapper.setAttribute("cx", this.componentAttached.center.x - (1.6*16));
+    this.connectionPointWrapper.setAttribute("cx", this.componentAttached.center.x - ((this.componentAttached.width / 2)*16));
     this.connectionPointWrapper.setAttribute("cy", this.componentAttached.center.y);
   }
 
@@ -37,8 +37,8 @@ export class ToConnectionPoint extends ConnectionPoint{
 
   reset() {
     this.removeSelf();
-    this._createConnectionWrapper(this.componentAttached.center.y - (1.6*16));
-    this._createConnectionPoint(this.componentAttached.center.x - (1.6*16));
+    this._createConnectionWrapper(this.componentAttached.center.y - ((this.componentAttached.width / 2)*16));
+    this._createConnectionPoint(this.componentAttached.center.x - ((this.componentAttached.width / 2)*16));
     this._addActions();
   }
 

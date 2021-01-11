@@ -3,9 +3,6 @@ package com.example.backend;
 import java.util.Random;
 import java.util.TimerTask;
 
-import com.example.BlockingQueue;
-
-
 public class Machine extends TimerTask{
     private int[] fromQueues;
 	private int toQueue;

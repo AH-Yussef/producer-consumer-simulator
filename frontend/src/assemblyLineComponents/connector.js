@@ -25,9 +25,9 @@ export class Connector {
       const svgns = "http://www.w3.org/2000/svg"; //variable for the namespace
       const newConnector = document.createElementNS(svgns, "line");
 
-      this.startingPoint.x = this.from.center.x - (1.6*16);
+      this.startingPoint.x = this.from.center.x - ((this.from.width / 2)*16);
       this.startingPoint.y = this.from.center.y;
-      this.endingPoint.x = this.from.center.x - (1.6*16);
+      this.endingPoint.x = this.from.center.x - ((this.from.width / 2)*16);
       this.endingPoint.y = this.from.center.y;
 
       gsap.set(newConnector, {
@@ -46,7 +46,7 @@ export class Connector {
     }
 
     updateStartingPoint() {
-      this.startingPoint.x = this.from.center.x - (1.6*16);
+      this.startingPoint.x = this.from.center.x - ((this.from.width / 2)*16);
       this.startingPoint.y = this.from.center.y;
 
       this.connector.setAttribute("x1", this.startingPoint.x);
@@ -66,12 +66,12 @@ export class Connector {
     }
 
     updateEndingPointAuto() {
-      this.updateEndingPoint(this.to.center.x + (1.6*16), this.to.center.y);
+      this.updateEndingPoint(this.to.center.x + ((this.to.width / 2)*16), this.to.center.y);
     }
 
     setToComponent(toComponent) {
       this.to = toComponent;
-      const toPointX = toComponent.center.x + (1.6*16);
+      const toPointX = toComponent.center.x + ((toComponent.width / 2)*16);
       const toPointY = toComponent.center.y;
       this.updateEndingPoint(toPointX, toPointY);
     }

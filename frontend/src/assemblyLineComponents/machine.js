@@ -19,6 +19,7 @@ export class Machine extends AssemblyLineComponent{
     const board = document.getElementById("board");
     const svgns = "http://www.w3.org/2000/svg"; //variable for the namespace
     const newMachine = document.createElementNS(svgns, "circle");
+    this.width = 3.2;
     gsap.set(newMachine, {
       attr: {
         cx: this.center.x, cy: this.center.y, r: "1.6rem",

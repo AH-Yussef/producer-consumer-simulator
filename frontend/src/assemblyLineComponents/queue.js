@@ -6,7 +6,7 @@ export class Queue extends AssemblyLineComponent{
   static codeCount = 0;
   static availableCodes = [];
 
-  shiftX = -1.6 * 16;
+  shiftX = - (this.width / 2) * 16;
   shiftY = -1 * 16;
 
   constructor(x, y) {
@@ -22,16 +22,20 @@ export class Queue extends AssemblyLineComponent{
     const board = document.getElementById("board");
     const svgns = "http://www.w3.org/2000/svg"; //variable for the namespace
     const newQueue = document.createElementNS(svgns, "rect");
+    
+    this.width = 5;
+    this.shiftX = -(this.width / 2) * 16;
+
     gsap.set(newQueue, {
       attr: {
         x: this.center.x + this.shiftX, y: this.center.y + this.shiftY,
-        width: "3.2rem", height: "2rem",
+        width: "5rem", height: "2rem",
         fill: "#F4D03F", stroke: "black", 'stroke-width': "2px", 
       }
     });
     
     const newQueueLabel = document.createElementNS(svgns, "text");
-    newQueueLabel.textContent = `Q${this.code}`;
+    newQueueLabel.textContent = `Q${this.code}|0`;
     gsap.set(newQueueLabel, {
       attr: {
         x: this.center.x , y: this.center.y, "text-anchor": "middle", 
@@ -59,6 +63,10 @@ export class Queue extends AssemblyLineComponent{
 
     this.componentLabel.setAttribute("x", this.center.x);
     this.componentLabel.setAttribute("y", this.center.y);
+  }
+
+  updateProductsNumber(productNumber) {
+    this.componentLabel.textContent = `Q${this.code}|${productNumber}`;
   }
 
   remove() {
