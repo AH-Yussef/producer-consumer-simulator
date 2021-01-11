@@ -7,10 +7,8 @@ import java.util.TimerTask;
 
 import com.example.backend.componenetsInfo.MachineInfo;
 import com.example.backend.componenetsInfo.QueueInfo;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@CrossOrigin
+
 public class Simulator {
     private boolean isSimulationOver=false;
     private int unfinishedProducts = 0;
@@ -31,11 +29,7 @@ public class Simulator {
         return instance;
     }
 
-    @RequestMapping(
-        value = "/startSimulation", 
-        method = RequestMethod.POST
-    )
-    public void startSimulation(@RequestParam String jsonMachines, @RequestParam String jsonQueues, @RequestParam int numberOfProducts){
+    public void startSimulation(String jsonMachines, String jsonQueues, int numberOfProducts){
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;
@@ -60,13 +54,12 @@ public class Simulator {
         for(int i=0; i<machinesArray.length; i++){
             //start timer of each machine
             machinesTimer[i] = new Timer();
-            machinesArray[i].setProcessTime();
-            machinesTimer[i].scheduleAtFixedRate(machinesArray[i], 0, machinesArray[i].getProcessTime());
+            machinesTimer[i].schedule(machinesArray[i], 0, machinesArray[i].getProcessTime());
 
             //add each machine to hashmap
             this.allMachines.put(machinesArray[i].getID(), machinesArray[i]);
         }
-
+        
         //put random value in inputRate in milliseconds
         this.inputRate = (new Random().nextInt(5) + 1) * 1000;
 

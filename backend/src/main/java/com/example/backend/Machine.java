@@ -18,7 +18,9 @@ public class Machine extends TimerTask{
 		this.ID = ID;
 	    this.fromQueues=fromQueues;
 		this.toQueue=toQueue;
-    }
+		this.processTime = (1+new Random().nextInt(6))*1000;
+	}
+	
     //Tries to send the product to all receiver queues (the first empty will get it) Note:needs furthure test
 	public void sendProduct(Queue queue){
 		try {
@@ -65,10 +67,8 @@ public class Machine extends TimerTask{
 	public void run() {
 		if(product.size()==0) {
 			for(int i=0;i<fromQueues.length;i++) {
-				System.out.println("id: " + i);
-
 				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
-				}
+			}
 		}
 		else {
 			sendProduct(Simulator.getInstance().getQueue(toQueue));
