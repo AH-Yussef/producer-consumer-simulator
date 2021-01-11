@@ -1,10 +1,9 @@
 package com.example.backend;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import com.example.BlockingQueue;
 
 public class Queue {
-	BlockingQueue<Product> allProducts = new LinkedBlockingQueue<Product>();
+	BlockingQueue<Product> allProducts = new BlockingQueue<Product>(Integer.MAX_VALUE);
 	boolean isEndQueue=false;
 	private int ID;
 
@@ -24,7 +23,8 @@ public class Queue {
 	}
     public Product sendProduct(){
         try {
-			return allProducts.take();
+			Product product = allProducts.take(); 
+			return product;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

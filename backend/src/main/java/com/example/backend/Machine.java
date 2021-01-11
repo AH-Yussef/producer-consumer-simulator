@@ -2,15 +2,16 @@ package com.example.backend;
 
 import java.util.Random;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+
+import com.example.BlockingQueue;
+
 
 public class Machine extends TimerTask{
     private int[] fromQueues;
 	private int toQueue;
 	private int ID;
-	private BlockingQueue<Product> product = new ArrayBlockingQueue<Product>(1);
-    private String color = "rgb(187,143,206)";
+	private BlockingQueue<Product> product = new BlockingQueue<Product>(1);
+    private String color = "187,143,206";
     //processTime is a random integer between 1 and 6 seconds (can be modified in the future) 
 	private int processTime = 0;
     //At initialization Machine takes her from and to Queues
@@ -67,12 +68,15 @@ public class Machine extends TimerTask{
 	public void run() {
 		if(product.size()==0) {
 			for(int i=0;i<fromQueues.length;i++) {
+				if(product.size()==1)break;
 				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
 			}
 		}
 		else {
 			sendProduct(Simulator.getInstance().getQueue(toQueue));
+			setColor("187,143,206");
 			for(int i=0;i<fromQueues.length;i++) {
+				if(product.size()==1)break;
 				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
 			}
 		}
