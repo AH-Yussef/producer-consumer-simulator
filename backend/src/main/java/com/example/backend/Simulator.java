@@ -1,6 +1,7 @@
 package com.example.backend;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,6 +20,7 @@ public class Simulator {
     private Timer productTimer;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
+    private HashSet<String> presentColors = new HashSet<String>();
 
     JsonConverter jsonConverter = new JsonConverter();
     // Singleton
@@ -86,6 +88,15 @@ public class Simulator {
     public boolean getIsSimulationOver(){
         return this.isSimulationOver;
     }
+    // resetting the simulator to its original state
+    private void reset(){
+        stopAllThreads(machinesTimer);
+        this.allMachines.clear();
+        this.allQueues.clear();
+        this.productTimer.cancel();
+        this.isSimulationOver = false;
+        this.presentColors.clear();
+    }
     /*
     * addProduct: adds/creates a new product to source queue each (inputRate)
     * keeps running until numberOfProducts reaches 0 then stops the thread
@@ -105,6 +116,11 @@ public class Simulator {
 			}
         };
         productTimer.schedule(inputProduct, 0, inputRate);
+    }
+
+    //
+    public boolean colorUsed(String color){
+        return presentColors.contains(color);
     }
 
     /*
