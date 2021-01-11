@@ -118,9 +118,13 @@ public class Simulator {
         productTimer.schedule(inputProduct, 0, inputRate);
     }
 
-    //
+    //checking if color already exists
     public boolean colorUsed(String color){
         return presentColors.contains(color);
+    }
+    //adds color to the set
+    public void addColor(String color){
+        this.presentColors.add(color);
     }
 
     /*
