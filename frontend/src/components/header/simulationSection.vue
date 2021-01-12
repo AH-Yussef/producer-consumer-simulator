@@ -67,11 +67,12 @@ export default {
         }})
         .then( () => {
           const tracker = setInterval(() => {
+            this.refreshCircuit();
+
             if(this.simulationFinished) {
               clearInterval(tracker);
               this.simulationFinished = false;
             }
-            else this.isSimulationOver();
           }, 1000);
         })
         .catch( (error) => console.log(error));
@@ -84,13 +85,25 @@ export default {
           this.endSimulation();
           this.toggleStartEnd()
         }
-        else {
-          this.getCurrentProductNum();
-          this.refreshCircuit();
-        }
+        // else {
+        //   this.getCurrentProductNum();
+        //   this.refreshCircuit();
+        // }
       })
       .catch( (error) => console.log(error));
     },
+    // refreshCircuit() {
+    //   axios.get('http://localhost:8085//getCurrentImage')
+    //   .then( (response) => {
+    //     console.log(response.data);
+    //     const circuitInfo = response.data;
+    //     const machinesInfo = circuitInfo.machines;
+    //     const queuesInfo = circuitInfo.queues;
+    //     this.updateMachines(machinesInfo);
+    //     this.updateQueues(queuesInfo);
+    //   })
+    //   .catch( (error) => console.log(error));
+    // },
     refreshCircuit() {
       axios.get('http://localhost:8085//getCurrentImage')
       .then( (response) => {
@@ -100,6 +113,9 @@ export default {
         const queuesInfo = circuitInfo.queues;
         this.updateMachines(machinesInfo);
         this.updateQueues(queuesInfo);
+
+        this.getCurrentProductNum();
+        this.isSimulationOver();
       })
       .catch( (error) => console.log(error));
     },
@@ -122,6 +138,11 @@ export default {
         machine.resetColor();
       }
     },
+    resetAllQueues() {
+      for(let queue of this.queues.values()){
+        queue.updateProductsNumber(0);
+      }
+    },
     //parsing machines info
     updateMachines(machinesInfo) {
       for(let machine of machinesInfo){
@@ -131,7 +152,7 @@ export default {
 
         const oldColor = currentMachine.fillColor;
         currentMachine.updateFillColor(updatedMachineColor);
-        if(oldColor != updatedMachineColor) currentMachine.flash(oldColor)
+        if(oldColor != updatedMachineColor && oldColor != "rgb(187,143,206)") currentMachine.flash(oldColor)
       }
     },
     updateQueues(queuesInfo) {
