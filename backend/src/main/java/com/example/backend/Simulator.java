@@ -3,7 +3,7 @@ package com.example.backend;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Timer;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -68,7 +68,7 @@ public class Simulator {
         
         //put random value in inputRate in milliseconds
         this.inputRate = (new Random().nextInt(5) + 2) * 1000;
-
+        
         //adding product
         addProduct();
     }

@@ -71,12 +71,12 @@ export default {
         }})
         .then( () => {
           const tracker = setInterval(() => {
-            this.refreshCircuit();
-
             if(this.simulationFinished) {
-              this.endSimulation();
+              // this.endSimulation();
               clearInterval(tracker);
             }
+
+            else this.refreshCircuit();
           }, 1000);
         })
         .catch( (error) => console.log(error));
@@ -86,8 +86,7 @@ export default {
       .then( (response) => {
         const isSimulationFinished = response.data;
         if(isSimulationFinished) {
-          this.start = true;
-          this.setStartEndBtn();
+          this.toggleStartEnd();
           this.endSimulation();
         }
         // else {
