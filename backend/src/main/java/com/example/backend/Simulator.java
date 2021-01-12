@@ -23,7 +23,54 @@ public class Simulator {
     private ScheduledExecutorService productTimer;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
-    private HashSet<String> presentColors = new HashSet<String>();
+    //private HashSet<String> presentColors = new HashSet<String>();
+
+    private String colorsArray[] = {"198,212,177",
+    "42,222,240",
+    "44,11,190",
+    "87,247,187",
+    "248,231,142",
+    "158,159,60",
+    "212,89,25",
+    "141,195,86",
+    "192,77,224",
+    "68,195,197",
+    "110,131,186",
+    "243,80,139",
+    "119,239,206",
+    "173,121,139",
+    "208,47,148",
+    "234,98,243",
+    "152,58,172",
+    "84,87,254",
+    "233,2,234",
+    "222,91,17",
+    "104,0,118",
+    "253,181,189",
+    "218,236,18",
+    "93,132,221",
+    "145,129,154",
+    "137,43,210",
+    "172,196,250",
+    "103,191,209",
+    "204,158,166",
+    "87,205,208",
+    "247,137,82",
+    "101,136,90",
+    "195,24,95",
+    "64,210,14",
+    "119,60,9",
+    "110,219,66",
+    "190,244,39",
+    "77,61,82",
+    "2,146,73",
+    "60,144,13",
+    "228,42,101",
+    "250,218,215",
+    "240,107,192",
+    "140,82,69",
+    "246,98,45"};
+    private int colorIndex = 0;
 
     private JsonConverter jsonConverter = new JsonConverter();
     MementoCollector mementoCollector = new MementoCollector();
@@ -115,7 +162,7 @@ public class Simulator {
         this.allQueues.clear();
         if(productTimer != null) this.productTimer.shutdown();
         this.isSimulationOver = false;
-        this.presentColors.clear();
+        //this.presentColors.clear();
         this.mementoCollector.reset();
     }
     /*
@@ -140,13 +187,16 @@ public class Simulator {
         
     }
 
-    //checking if color already exists
-    public boolean colorUsed(String color){
-        return presentColors.contains(color);
-    }
-    //adds color to the set
-    public void addColor(String color){
-        this.presentColors.add(color);
+    // //checking if color already exists
+    // public boolean colorUsed(String color){
+    //     return presentColors.contains(color);
+    // }
+    // //adds color to the set
+    // public void addColor(String color){
+    //     this.presentColors.add(color);
+    // }
+    public String getNewColor(){
+        return this.colorsArray[(this.colorIndex++)%this.colorsArray.length];
     }
 
     /*
