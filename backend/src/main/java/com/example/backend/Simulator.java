@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.example.backend.componenetsInfo.MachineInfo;
 import com.example.backend.componenetsInfo.QueueInfo;
@@ -16,8 +19,8 @@ public class Simulator {
     private int numberOfProducts;
     private Queue sourceQueue;
     private int inputRate;
-    private Timer[] machinesTimer;
-    private Timer productTimer;
+    private ScheduledExecutorService[] machinesTimer;
+    private ScheduledExecutorService productTimer;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
     private HashSet<String> presentColors = new HashSet<String>();
@@ -40,7 +43,7 @@ public class Simulator {
 //        Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
         Queue[] queuesArray = setupQueues(jsonQueues);
 
-        this.machinesTimer = new Timer[machinesArray.length];
+        this.machinesTimer = new ScheduledExecutorService[machinesArray.length];
 
         //put queues present in queuesArray into allQueues
         for(int i=0; i<queuesArray.length; i++){
@@ -55,9 +58,10 @@ public class Simulator {
         //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
             //start timer of each machine
-            machinesTimer[i] = new Timer();
-            machinesTimer[i].schedule(machinesArray[i], 0, machinesArray[i].getProcessTime());
-
+            ////machinesTimer[i] = new Timer();
+            ////machinesTimer[i].schedule(machinesArray[i], 0, machinesArray[i].getProcessTime());
+            machinesTimer[i] = Executors.newSingleThreadScheduledExecutor();
+            machinesTimer[i].scheduleWithFixedDelay(machinesArray[i], 0, machinesArray[i].getProcessTime(), TimeUnit.MILLISECONDS);
             //add each machine to hashmap
             this.allMachines.put(machinesArray[i].getID(), machinesArray[i]);
         }
@@ -112,7 +116,7 @@ public class Simulator {
         if(machinesTimer != null) stopAllThreads(machinesTimer);
         this.allMachines.clear();
         this.allQueues.clear();
-        if(productTimer != null) this.productTimer.cancel();
+        if(productTimer != null) this.productTimer.shutdown();
         this.isSimulationOver = false;
         this.presentColors.clear();
     }
@@ -121,7 +125,7 @@ public class Simulator {
     * keeps running until numberOfProducts reaches 0 then stops the thread
     */
     private void addProduct(){
-        this.productTimer = new Timer();
+        this.productTimer = Executors.newSingleThreadScheduledExecutor();
         TimerTask inputProduct = new TimerTask(){
 			@Override
 			public void run() {
@@ -130,11 +134,12 @@ public class Simulator {
                     numberOfProducts--;
                 }
                 else{
-                    productTimer.cancel();
+                    productTimer.shutdown();
                 }
 			}
         };
-        productTimer.schedule(inputProduct, 0, inputRate);
+        productTimer.scheduleWithFixedDelay(inputProduct, 0, inputRate, TimeUnit.MILLISECONDS);
+        
     }
 
     //checking if color already exists
@@ -160,8 +165,8 @@ public class Simulator {
     }
     
     // stops all machine threads
-    private void stopAllThreads(Timer[]threads){
-        for(Timer thread : threads) thread.cancel();
+    private void stopAllThreads(ScheduledExecutorService[]threads){
+        for(ScheduledExecutorService thread : threads) thread.shutdown();
     }
 
     // getting a particular queue object

@@ -26,14 +26,19 @@ public class Machine extends TimerTask{
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		finally{
+			setColor("187,143,206");
+		}
     }
     //Tries to receive the product from all sender queues (the first non-emprt will send it) Note:needs furthure test
 	public void receiveProduct(Queue queue) {
 		try {
 			this.product.put(queue.sendProduct());
-			setColor(this.product.peek().getColor());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		}
+		finally{
+			setColor(this.product.peek().getColor());
 		}
 	}
 	public String getColor() {
@@ -64,17 +69,24 @@ public class Machine extends TimerTask{
 	@Override
 	public void run() {
 		if(product.size()==0) {
-			for(int i=0;i<fromQueues.length;i++) {
-				if(product.size()==1)break;
-				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+			while(true){
+				for(int i=0;i<fromQueues.length;i++) {
+					if(Simulator.getInstance().getQueue(fromQueues[i]).getNumberOfProducts()>0){
+					receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+					return;
+					}
+				}
 			}
 		}
 		else {
 			sendProduct(Simulator.getInstance().getQueue(toQueue));
-			setColor("187,143,206");
-			for(int i=0;i<fromQueues.length;i++) {
-				if(product.size()==1)break;
-				receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+			while(true){
+				for(int i=0;i<fromQueues.length;i++) {
+					if(Simulator.getInstance().getQueue(fromQueues[i]).getNumberOfProducts()>0){
+					receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+					return;
+					}
+				}
 			}
 		}
 	}
