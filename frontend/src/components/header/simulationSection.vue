@@ -59,6 +59,10 @@ export default {
     },
     //requests helper methods
     startSimulation(machinesJson, queuesJson, productsNumber) {
+      this.resetAllMachines();
+      this.resetAllQueues();
+      this.simulationFinished = false;
+
       axios.post('http://localhost:8085//startSimulation', null, 
         {params :{
           jsonMachines: machinesJson,
@@ -70,8 +74,8 @@ export default {
             this.refreshCircuit();
 
             if(this.simulationFinished) {
+              this.endSimulation();
               clearInterval(tracker);
-              this.simulationFinished = false;
             }
           }, 1000);
         })
@@ -82,8 +86,9 @@ export default {
       .then( (response) => {
         const isSimulationFinished = response.data;
         if(isSimulationFinished) {
+          this.start = true;
+          this.setStartEndBtn();
           this.endSimulation();
-          this.toggleStartEnd()
         }
         // else {
         //   this.getCurrentProductNum();
@@ -131,7 +136,6 @@ export default {
       document.getElementById("board").style.pointerEvents = 'auto';
       this.productsNumber = 20;
       this.enableInput();
-      this.resetAllMachines();
     },
     resetAllMachines() {
       for(let machine of this.machines.values()){
