@@ -69,7 +69,7 @@ public class Simulator {
         addProduct();
     }
 
-    public String getAllMachines(){
+    private String getAllMachines(){
         String jsonMachines = "[";
         for(HashMap.Entry<Integer, Machine> mapElement : allMachines.entrySet()){
             jsonMachines += "\n{\"id\" : " + String.valueOf(mapElement.getKey()) + ",\n";
@@ -81,7 +81,7 @@ public class Simulator {
         //
         return jsonMachines;
     }
-    public String getAllQueues(){
+    private String getAllQueues(){
         String jsonQueues = "[";
         for(HashMap.Entry<Integer, Queue> mapElement : allQueues.entrySet()){
             jsonQueues += "\n{\"id\" : " + String.valueOf(mapElement.getKey()) + ",\n";
@@ -93,6 +93,13 @@ public class Simulator {
         //
         return jsonQueues;
     }
+
+    public String getCircuitInfo(){
+        String circuitInfo = "{\n";
+        circuitInfo += "\"machines\" :" + getAllMachines() + ",\n";
+        circuitInfo += "\"queues\" : " + getAllQueues() + "\n}"; 
+        return circuitInfo;
+    } 
 
     public int getNumberOfProducts(){
         return this.numberOfProducts;

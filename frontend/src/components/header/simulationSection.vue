@@ -93,7 +93,14 @@ export default {
     },
     refreshCircuit() {
       axios.get('http://localhost:8085//getCurrentImage')
-      .then( (response) => this.updateMachines(response.data))
+      .then( (response) => {
+        console.log(response.data);
+        const circuitInfo = response.data;
+        const machinesInfo = circuitInfo.machines;
+        const queuesInfo = circuitInfo.queues;
+        this.updateMachines(machinesInfo);
+        this.updateQueues(queuesInfo);
+      })
       .catch( (error) => console.log(error));
     },
     getCurrentProductNum() {
@@ -125,6 +132,14 @@ export default {
         const oldColor = currentMachine.fillColor;
         currentMachine.updateFillColor(updatedMachineColor);
         if(oldColor != updatedMachineColor) currentMachine.flash(oldColor)
+      }
+    },
+    updateQueues(queuesInfo) {
+      for(let queue of queuesInfo) {
+        const queueId = queue.id;
+        const queueSize = queue.numberOfProducts;
+        const currentQueue = this.queues.get(queueId);
+        currentQueue.updateProductsNumber(queueSize);
       }
     },
     isValidCircuit() {

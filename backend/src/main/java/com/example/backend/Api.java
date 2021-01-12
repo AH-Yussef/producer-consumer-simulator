@@ -18,7 +18,7 @@ public class Api {
 
     @GetMapping("/getCurrentImage")
     public String getCurrentImage() {
-        return Simulator.getInstance().getAllMachines();
+        return Simulator.getInstance().getCircuitInfo();
     }
 
     @GetMapping("/isSimulationFinished")
