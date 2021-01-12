@@ -18,6 +18,7 @@ export class FromConnectionPoint extends ConnectionPoint{
     for(let connector of this.inConnectors.values()) {
       connector.removeSelf();
     }
+    this.inConnectors.clear();
   }
 
   updatePos() {

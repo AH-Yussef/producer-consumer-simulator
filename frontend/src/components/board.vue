@@ -41,7 +41,7 @@ export default {
       }
     }
   },
-  computed: mapGetters(['isDrawing', 'componentType', 'getCurrentComponent', 'getCurrSelectedComponent']),
+  computed: mapGetters(['isDrawing', 'componentType', 'getCurrentComponent', 'getCurrSelectedComponent', 'queues', 'machines']),
   methods: {
     ...mapActions(['disableDrawingMode', 'pushNewQueue', 'pushNewMachine', 'setCurrentComponent', 'setBoardMouseDown']),
     //Drawing Shapes
@@ -69,6 +69,9 @@ export default {
       const currSelectedComponent =  this.getCurrSelectedComponent;
       if(currSelectedComponent != null && !currSelectedComponent.mouseDown) currSelectedComponent.unselectSelf();
 
+      this.resetAllMachines();
+      this.resetAllQueues();
+      
       if(this.getCurrentComponent == null) return;
 
       if(this.isDrawing) {
@@ -103,6 +106,16 @@ export default {
     },
     isMachine(){
       return this.componentType === this.components.machine;
+    },
+    resetAllMachines() {
+      for(let machine of this.machines.values()){
+        machine.resetColor();
+      }
+    },
+    resetAllQueues() {
+      for(let queue of this.queues.values()){
+        queue.updateProductsNumber(0);
+      }
     },
     //initializing the circuit
     mountStartingQueue() {

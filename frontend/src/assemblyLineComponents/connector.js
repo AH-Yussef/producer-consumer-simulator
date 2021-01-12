@@ -79,6 +79,7 @@ export class Connector {
     removeSelf(){
       this.connector.remove();
       if(this.to != null) this.to.fromConnectionPoint.fromComponents.delete(this.from.code);
+      this.from.toConnectionPoint.outConnectors.delete(this.code);
       if(this.wrapper != null) this.wrapper.remove();
     }
 
@@ -124,8 +125,8 @@ export class Connector {
 
       const rotationAngle = Math.atan(height/ width) *(180/ Math.PI);
   
-      const selectorRadiusW = (lineLength/2) - 5;
-      const selectorRadiusH = 5;
+      const selectorRadiusW = Math.abs((lineLength/2) - 5);
+      const selectorRadiusH = Math.abs(5);
   
       gsap.set(this.wrapper, {
         attr: {

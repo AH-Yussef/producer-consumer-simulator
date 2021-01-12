@@ -72,8 +72,8 @@ public class Machine extends TimerTask{
 			while(true){
 				for(int i=0;i<fromQueues.length;i++) {
 					if(Simulator.getInstance().getQueue(fromQueues[i]).getNumberOfProducts()>0){
-					receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
-					return;
+						receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+						return;
 					}
 				}
 			}
@@ -83,8 +83,8 @@ public class Machine extends TimerTask{
 			while(true){
 				for(int i=0;i<fromQueues.length;i++) {
 					if(Simulator.getInstance().getQueue(fromQueues[i]).getNumberOfProducts()>0){
-					receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
-					return;
+						receiveProduct(Simulator.getInstance().getQueue(fromQueues[i]));
+						return;
 					}
 				}
 			}

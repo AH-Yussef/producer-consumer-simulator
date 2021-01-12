@@ -1,5 +1,6 @@
 <template>
   <div id="header">
+    <clearAll/>
     <insert/>
     <simulation/>
   </div>
@@ -8,12 +9,14 @@
 <script>
 import insert from '../components/header/insertSection.vue';
 import simulation from '../components/header/simulationSection.vue';
+import clearAll from '../components/header/clearAll.vue';
 
 export default {
   name: 'appHeader',
   components: {
     insert,
     simulation,
+    clearAll,
   },
 }
 </script>

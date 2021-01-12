@@ -3,7 +3,6 @@ package com.example.backend;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.example.backend.componenetsInfo.MachineInfo;
 import com.example.backend.componenetsInfo.QueueInfo;
+import com.example.backend.memento.MementoCollector;
 
 
 public class Simulator {
@@ -25,7 +25,8 @@ public class Simulator {
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
     private HashSet<String> presentColors = new HashSet<String>();
 
-    JsonConverter jsonConverter = new JsonConverter();
+    private JsonConverter jsonConverter = new JsonConverter();
+    MementoCollector mementoCollector = new MementoCollector();
     // Singleton
     private static Simulator instance;
     private Simulator(){}
@@ -38,9 +39,7 @@ public class Simulator {
         //take the json strings and convert them to array of java objects
         this.numberOfProducts = numberOfProducts;
         this.unfinishedProducts = numberOfProducts;
-//        Machine[] machinesArray = jsonConverter.jsonArrayToMachineArray(jsonMachines);
         Machine[] machinesArray = setupMachines(jsonMachines);
-//        Queue[] queuesArray = jsonConverter.jsonArrayToQueueArray(jsonQueues);
         Queue[] queuesArray = setupQueues(jsonQueues);
 
         this.machinesTimer = new ScheduledExecutorService[machinesArray.length];
@@ -58,10 +57,9 @@ public class Simulator {
         //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
             //start timer of each machine
-            ////machinesTimer[i] = new Timer();
-            ////machinesTimer[i].schedule(machinesArray[i], 0, machinesArray[i].getProcessTime());
             machinesTimer[i] = Executors.newSingleThreadScheduledExecutor();
             machinesTimer[i].scheduleWithFixedDelay(machinesArray[i], 0, machinesArray[i].getProcessTime(), TimeUnit.MILLISECONDS);
+            
             //add each machine to hashmap
             this.allMachines.put(machinesArray[i].getID(), machinesArray[i]);
         }
@@ -80,9 +78,6 @@ public class Simulator {
             jsonMachines += "\"color\" : \"rgb(" + mapElement.getValue().getColor() + ")\"},";
         }
         jsonMachines = jsonMachines.substring(0, jsonMachines.length()-1) + "\n]";
-        //before returning we will add here the MEMENTO to save the current image
-
-        //
         return jsonMachines;
     }
     private String getAllQueues(){
@@ -92,16 +87,18 @@ public class Simulator {
             jsonQueues += "\"numberOfProducts\" : "+ mapElement.getValue().getNumberOfProducts() + "},";
         }
         jsonQueues = jsonQueues.substring(0, jsonQueues.length()-1) + "\n]";
-        //before returning we will add here the MEMENTO to save the current image
-
-        //
         return jsonQueues;
     }
 
     public String getCircuitInfo(){
         String circuitInfo = "{\n";
+        circuitInfo += "\"productsNum\" :" + getNumberOfProducts() + ",\n";
         circuitInfo += "\"machines\" :" + getAllMachines() + ",\n";
-        circuitInfo += "\"queues\" : " + getAllQueues() + "\n}"; 
+        circuitInfo += "\"queues\" : " + getAllQueues() + "\n}";
+
+        //save a memento containing circuit info
+        mementoCollector.appendToMementoMap(circuitInfo);
+
         return circuitInfo;
     } 
 
@@ -119,6 +116,7 @@ public class Simulator {
         if(productTimer != null) this.productTimer.shutdown();
         this.isSimulationOver = false;
         this.presentColors.clear();
+        this.mementoCollector.reset();
     }
     /*
     * addProduct: adds/creates a new product to source queue each (inputRate)
@@ -199,38 +197,6 @@ public class Simulator {
         }
         return allQueues;
     }
-    
 
 
-    /*The method found to divide tasks with timers is given in the example below */
-    /*
-    public static void main(String[] args) {
-		Queues queue1 = new Queues();
-		Queues queue2 = new Queues();
-		LinkedList<Queues> fromQueue= new LinkedList<Queues>();
-		fromQueue.add(queue1);
-		LinkedList<Queues> toQueue= new LinkedList<Queues>();
-		toQueue.add(queue2);
-		Machine machine1 = new Machine(fromQueue,toQueue);
-		
-	
-		
-		TimerTask inputRate = new TimerTask() {
-			@Override
-			public void run() {
-				System.out.println("Queue1 size= "+queue1.allProducts.size()+"\nQueue2 size= "+queue2.allProducts.size()+"\nMachine1 contains "+machine1.product.size()+" product");
-					queue1.receiveProduct(new Product());
-			}
-		};
-		Timer timer[] = new Timer[2];
-		timer[0]=new Timer();
-		timer[1]=new Timer();
-		timer[0].schedule(inputRate,0,1000);
-		timer[1].schedule(machine1,0,machine1.getProcessTime());
-		System.out.println(machine1.getProcessTime());
-	}
-    */
-    // public static void main(String[]args){
-    //     System.out.println("\"color\" : ");
-    // }
 }

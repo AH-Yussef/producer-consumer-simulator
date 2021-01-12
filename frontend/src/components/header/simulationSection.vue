@@ -3,7 +3,7 @@
     <div id="num-label">Number of products</div>
     <input type="number" id="products-input" placeholder="20" v-model="productsNumber">
     <div id="start-end-btn" :class="['sim-btn', setStartEndBtn()]" @click="TriggerSimulation()">{{startEndBtnText}}</div>
-    <div id="replay-btn" :class="['sim-btn', 'hidden']">
+    <div id="replay-btn" :class="replayBtnStatus" @click="replay()">
       replay
     </div>
   </div>
@@ -21,6 +21,8 @@ export default {
       productsNumber: 20,
       startEndBtnText: "start simulation",
       simulationFinished: false,
+      replayBtnStatus: 'hidden',
+      seconds: 1,
     }
   },
   computed: mapGetters(['queues', 'machines', 'getErrorCard']),
@@ -40,6 +42,12 @@ export default {
         return "start-btn";
       }
     },
+    showReplayBtn() {
+      this.replayBtnStatus = 'sim-btn';
+    },
+    hideReplayBtn() {
+      this.replayBtnStatus = 'hidden';
+    },
     TriggerSimulation() {
       if(!this.isValidCircuit()) return;
       this.toggleStartEnd();
@@ -47,6 +55,9 @@ export default {
         const queuesJson = this.getQueuesInfo();
         const machinesJson = this.getMachinesInfo();
         const productsNumber = this.getProductsNumber();
+
+        console.log(queuesJson);
+        console.log(machinesJson);
 
         this.disableInput();
         document.getElementById("board").style.pointerEvents = 'none';
@@ -59,9 +70,11 @@ export default {
     },
     //requests helper methods
     startSimulation(machinesJson, queuesJson, productsNumber) {
+      this.hideReplayBtn();
       this.resetAllMachines();
       this.resetAllQueues();
       this.simulationFinished = false;
+      this.seconds = 0;
 
       axios.post('http://localhost:8085//startSimulation', null, 
         {params :{
@@ -72,14 +85,45 @@ export default {
         .then( () => {
           const tracker = setInterval(() => {
             if(this.simulationFinished) {
-              // this.endSimulation();
+              this.showReplayBtn();
               clearInterval(tracker);
             }
 
-            else this.refreshCircuit();
+            else {
+              this.refreshCircuit();
+              this.seconds ++;
+            }
           }, 1000);
         })
         .catch( (error) => console.log(error));
+    },
+    //replay
+    replay() {
+      this.resetAllMachines();
+      this.resetAllQueues();
+      let currSecond = 1;
+
+      this.disableInput();
+      document.getElementById("board").style.pointerEvents = 'none';
+      
+      const replayTracker = setInterval(() => {
+        if(currSecond > this.seconds) {
+          this.enableInput();
+          document.getElementById("board").style.pointerEvents = 'auto';
+      
+          clearInterval(replayTracker);
+        }
+        else {
+          axios.get('http://localhost:8085//replay', 
+          {params: {
+            second: currSecond ++,
+          }})
+          .then( (response) => {
+            this.updateCircuit(response.data);
+          })
+          .catch( (error) => console.log(error));
+        }
+      }, 1000);
     },
     isSimulationOver() {
       axios.get('http://localhost:8085//isSimulationFinished')
@@ -89,46 +133,29 @@ export default {
           this.toggleStartEnd();
           this.endSimulation();
         }
-        // else {
-        //   this.getCurrentProductNum();
-        //   this.refreshCircuit();
-        // }
       })
       .catch( (error) => console.log(error));
     },
-    // refreshCircuit() {
-    //   axios.get('http://localhost:8085//getCurrentImage')
-    //   .then( (response) => {
-    //     console.log(response.data);
-    //     const circuitInfo = response.data;
-    //     const machinesInfo = circuitInfo.machines;
-    //     const queuesInfo = circuitInfo.queues;
-    //     this.updateMachines(machinesInfo);
-    //     this.updateQueues(queuesInfo);
-    //   })
-    //   .catch( (error) => console.log(error));
-    // },
     refreshCircuit() {
       axios.get('http://localhost:8085//getCurrentImage')
       .then( (response) => {
         console.log(response.data);
-        const circuitInfo = response.data;
-        const machinesInfo = circuitInfo.machines;
-        const queuesInfo = circuitInfo.queues;
-        this.updateMachines(machinesInfo);
-        this.updateQueues(queuesInfo);
+        this.updateCircuit(response.data);
 
-        this.getCurrentProductNum();
         this.isSimulationOver();
       })
       .catch( (error) => console.log(error));
     },
-    getCurrentProductNum() {
-      axios.get('http://localhost:8085//remainingProducts')
-      .then( (response) => {
-        this.productsNumber = response.data;
-      })
-      .catch( (error) => console.log(error));
+    updateCircuit(circuitInfo) {
+      const machinesInfo = circuitInfo.machines;
+      const queuesInfo = circuitInfo.queues;
+      const currNumberOfProducts = circuitInfo.productsNum;
+      this.updateMachines(machinesInfo);
+      this.updateQueues(queuesInfo);
+      this.updateNumberOfProducts(currNumberOfProducts);    
+    },
+    updateNumberOfProducts(numberOfProducts) {
+      this.productsNumber = numberOfProducts;
     },
     endSimulation() {
       this.simulationFinished = true;
@@ -190,6 +217,18 @@ export default {
         }
       }
 
+      if(this.productsNumber == "") {
+        this.setErrorMsg(`products number cannot be empty`);
+        this.getErrorCard.showErrorMsg();
+        return false;
+      }
+
+      if(this.productsNumber == 0) {
+        this.setErrorMsg(`products number cannot be 0`);
+        this.getErrorCard.showErrorMsg();
+        return false;
+      }
+
       return true;
     },
     getQueuesInfo() {
@@ -217,7 +256,6 @@ export default {
       return JSON.stringify(allMahinesInfo);
     },
     getProductsNumber() {
-      if(this.productsNumber == "") this.productsNumber = 20;
       return Math.trunc(+this.productsNumber);
     },
     disableInput() {

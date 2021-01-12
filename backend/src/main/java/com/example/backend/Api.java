@@ -30,4 +30,9 @@ public class Api {
     public int getRemainingProducts() {
         return Simulator.getInstance().getNumberOfProducts();
     }
+
+    @GetMapping("/replay")
+    public String getPrevImage(@RequestParam int second) {
+        return Simulator.getInstance().mementoCollector.getSpecificMemento(second);
+    }
 }
