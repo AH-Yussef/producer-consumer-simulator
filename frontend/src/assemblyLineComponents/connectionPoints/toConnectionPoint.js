@@ -101,5 +101,21 @@ export class ToConnectionPoint extends ConnectionPoint{
 
     store.dispatch('resetFromComponent');
     store.dispatch('resetToComponent');
+
+    this._resetAllMachines();
+    this._resetAllQueues();
+    document.getElementById("replay-btn").className = 'hidden'; 
+  }
+
+  //reset queues and machine
+  _resetAllMachines() {
+    for(let machine of store.getters.machines.values()){
+      machine.resetColor();
+    }
+  }
+  _resetAllQueues() {
+    for(let queue of store.getters.queues.values()){
+      queue.resetCount();
+    }
   }
 }

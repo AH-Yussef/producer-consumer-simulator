@@ -24,7 +24,7 @@ public class BlockingQueue<E> {
         lock.lock();
         try{
             if(readyMachines.contains(ID)){
-            readyMachines.remove(readyMachines.indexOf(ID));
+                readyMachines.remove(readyMachines.indexOf(ID));
         }
     }
         finally{lock.unlock();}

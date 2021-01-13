@@ -1,6 +1,5 @@
 package com.example.backend;
 
-
 public class Queue {
 	BlockingQueue<Product> allProducts = new BlockingQueue<Product>();
 	boolean isEndQueue=false;

@@ -69,6 +69,10 @@ export class Queue extends AssemblyLineComponent{
     this.componentLabel.textContent = `Q${this.code}|${productNumber}`;
   }
 
+  resetCount() {
+    this.updateProductsNumber(0);
+  }
+
   remove() {
     Queue.availableCodes.push(this.code);
     store.getters.queues.delete(this.code);

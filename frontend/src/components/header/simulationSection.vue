@@ -3,8 +3,8 @@
     <div id="num-label">Number of products</div>
     <input type="number" id="products-input" placeholder="20" v-model="productsNumber">
     <div id="start-end-btn" :class="['sim-btn', setStartEndBtn()]" @click="TriggerSimulation()">{{startEndBtnText}}</div>
-    <div id="replay-btn" :class="replayBtnStatus" @click="replay()">
-      replay
+    <div id="replay-btn" class="hidden" @click="toggleReplay()">
+      {{replayText}}
     </div>
   </div>
 </template>
@@ -20,9 +20,12 @@ export default {
       start: true,
       productsNumber: 20,
       startEndBtnText: "start simulation",
+      replayText: "repaly",
       simulationFinished: false,
       replayBtnStatus: 'hidden',
       seconds: 1,
+      replayFinished: false,
+      replayRunning: false,
     }
   },
   computed: mapGetters(['queues', 'machines', 'getErrorCard']),
@@ -43,13 +46,13 @@ export default {
       }
     },
     showReplayBtn() {
-      this.replayBtnStatus = 'sim-btn';
+      document.getElementById("replay-btn").className = 'sim-btn';
     },
     hideReplayBtn() {
-      this.replayBtnStatus = 'hidden';
+      document.getElementById("replay-btn").className = 'hidden';
     },
     TriggerSimulation() {
-      if(!this.isValidCircuit()) return;
+      if(this.start && !this.isValidCircuit()) return;
       this.toggleStartEnd();
       if(!this.start) {
         const queuesJson = this.getQueuesInfo();
@@ -74,6 +77,7 @@ export default {
       this.resetAllMachines();
       this.resetAllQueues();
       this.simulationFinished = false;
+      this.replayFinished = false;
       this.seconds = 0;
 
       axios.post('http://localhost:8085//startSimulation', null, 
@@ -85,8 +89,12 @@ export default {
         .then( () => {
           const tracker = setInterval(() => {
             if(this.simulationFinished) {
-              this.showReplayBtn();
-              clearInterval(tracker);
+              setTimeout(() => {
+                this.refreshCircuit();
+                clearInterval(tracker);
+                this.showReplayBtn();
+                this.toggleStartEnd();
+              }, 500);
             }
 
             else {
@@ -98,18 +106,29 @@ export default {
         .catch( (error) => console.log(error));
     },
     //replay
+    toggleReplay() {
+      if(!this.replayRunning) {
+        this.replay();
+        this.replayText = "end replay";
+      }
+      else {
+        this.endReplay();
+        this.replayText = "replay";
+      }
+      this.replayRunning = !this.replayRunning;
+    },
     replay() {
       this.resetAllMachines();
       this.resetAllQueues();
       let currSecond = 1;
+      this.replayFinished = false;
 
       this.disableInput();
       document.getElementById("board").style.pointerEvents = 'none';
       
       const replayTracker = setInterval(() => {
-        if(currSecond > this.seconds) {
-          this.enableInput();
-          document.getElementById("board").style.pointerEvents = 'auto';
+        if(currSecond > this.seconds || this.replayFinished) {
+          this.endReplay();
       
           clearInterval(replayTracker);
         }
@@ -125,12 +144,19 @@ export default {
         }
       }, 1000);
     },
+    endReplay() {
+      this.replayFinished = true;
+      document.getElementById("board").style.pointerEvents = 'auto';
+      this.productsNumber = 20;
+      this.enableInput();
+      this.replayRunning = false;
+      this.replayText = 'replay';
+    },
     isSimulationOver() {
       axios.get('http://localhost:8085//isSimulationFinished')
       .then( (response) => {
         const isSimulationFinished = response.data;
         if(isSimulationFinished) {
-          this.toggleStartEnd();
           this.endSimulation();
         }
       })
@@ -170,7 +196,7 @@ export default {
     },
     resetAllQueues() {
       for(let queue of this.queues.values()){
-        queue.updateProductsNumber(0);
+        queue.resetCount();
       }
     },
     //parsing machines info

@@ -1,7 +1,6 @@
 package com.example.backend;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -104,6 +103,7 @@ public class Simulator {
         //put machines present in machinesArray into allMachines and schedule their timers
         for(int i=0; i<machinesArray.length; i++){
             //start timer of each machine
+
             machinesTimer[i] = Executors.newSingleThreadScheduledExecutor();
             machinesTimer[i].scheduleWithFixedDelay(machinesArray[i], 0, machinesArray[i].getProcessTime(), TimeUnit.MILLISECONDS);
             
@@ -206,6 +206,7 @@ public class Simulator {
     */
 	public void addFinishedProduct() {
         this.unfinishedProducts--;
+
         if(unfinishedProducts == 0){
             stopAllThreads(this.machinesTimer);
             isSimulationOver = true;
@@ -214,6 +215,8 @@ public class Simulator {
     
     // stops all machine threads
     private void stopAllThreads(ScheduledExecutorService[]threads){
+        System.out.println("\n\n");
+
         for(ScheduledExecutorService thread : threads) thread.shutdown();
     }
 

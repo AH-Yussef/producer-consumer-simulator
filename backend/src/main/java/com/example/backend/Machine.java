@@ -18,7 +18,7 @@ public class Machine extends TimerTask {
 		this.ID = ID;
 		this.fromQueues = fromQueues;
 		this.toQueue = toQueue;
-		this.processTime = (2 + new Random().nextInt(6)) * 1000;
+		this.processTime = (2 + new Random().nextInt(10)) * 1000;
 	}
 
 	// Tries to send the product to all receiver queues (the first empty will get
@@ -52,12 +52,11 @@ public class Machine extends TimerTask {
 	}
 
 	public int getProcessTime() {
-		// System.out.println("process time = " + this.processTime);
 		return processTime;
 	}
 
-	public void setProcessTime() {
-		this.processTime = (1 + new Random().nextInt(6)) * 1000;
+	public void setProcessTime(int processTime) {
+		this.processTime = processTime;
 	}
 
 	// getter and setter
@@ -71,20 +70,20 @@ public class Machine extends TimerTask {
 
 	public void notifyReadyState() throws InterruptedException {
 		try{
-		for (int i = 0; i < fromQueues.length; i++) {
-			Simulator.getInstance().getQueue(fromQueues[i]).notifyReadyState(ID);
+			for (int i = 0; i < fromQueues.length; i++) {
+				Simulator.getInstance().getQueue(fromQueues[i]).notifyReadyState(ID);
 			}
 		}
 		finally{
-		Simulator.getInstance().getQueue(fromQueues[0]).allProducts.PutMachineToSleep(ID);
+			Simulator.getInstance().getQueue(fromQueues[0]).allProducts.PutMachineToSleep(ID);
 		}
 }
 
 	public void notifyProcessingState() {
 		try{
-		for (int i = 0; i < fromQueues.length; i++) {
-			Simulator.getInstance().getQueue(fromQueues[i]).notifyProcessingState(ID);
-		}
+			for (int i = 0; i < fromQueues.length; i++) {
+				Simulator.getInstance().getQueue(fromQueues[i]).notifyProcessingState(ID);
+			}
 		}
 		finally{
 		Simulator.getInstance().getQueue(fromQueues[0]).allProducts.wakeMachineUp();
@@ -116,3 +115,4 @@ public class Machine extends TimerTask {
 		}
 	}
 }
+ 

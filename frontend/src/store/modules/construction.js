@@ -19,8 +19,20 @@ const actions = {
 	disableDrawingMode: ({commit}) => commit('setDrawingMode', false),
   setComponentType: ({commit}, componentType) => commit('changeComponentType', componentType),
   setCurrentComponent: ({commit}, currentComponenet) => commit('changeCurrentComponent', currentComponenet),
-	pushNewQueue: ({commit}, queue) => commit('pushQueue', queue),
-	pushNewMachine: ({commit}, machine) => commit('pushMachine', machine),
+	pushNewQueue: ({commit}, queue) => { 
+		commit('pushQueue', queue);
+		for(let queue of state.queues.values()){
+			queue.resetCount();
+		}
+		document.getElementById("replay-btn").className = 'hidden'; 
+	},
+	pushNewMachine: ({commit}, machine) => {
+		commit('pushMachine', machine);
+		for(let machine of state.machines.values()){
+			machine.resetColor();
+		}
+		document.getElementById("replay-btn").className = 'hidden'; 
+	},
 	clearAllQueues: ({commit}) => commit('clearQueues'),    
   clearAllMachines: ({commit}) => commit('clearMachines'),    
 }
