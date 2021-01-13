@@ -7,48 +7,76 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class BlockingQueue<E> {
+    private LinkedList<Integer> readyMachines = new LinkedList<>();
     private Queue<E> queue;
-    private int max;
     private ReentrantLock lock = new ReentrantLock(true);
-    private Condition notFullQueue = lock.newCondition();
-    private Condition notEmptyQueue = lock.newCondition();
+    private Condition WakeMachinesUp = lock.newCondition();
 
-    public BlockingQueue(int size){
+    public BlockingQueue(){
         queue = new LinkedList<>();
-        this.max=size;
     }
-
+    public void addToReadyMachines(int ID){
+        lock.lock();
+        try{readyMachines.addLast(ID);}
+        finally{lock.unlock();}
+    }
+    public void removeFromReadyMachines(int ID){
+        lock.lock();
+        try{
+            if(readyMachines.contains(ID)){
+            readyMachines.remove(readyMachines.indexOf(ID));
+        }
+    }
+        finally{lock.unlock();}
+    }
+    public void wakeMachineUp(){
+        lock.lock();
+        try{WakeMachinesUp.signalAll();}
+        finally{lock.unlock();}
+        
+    }
     public void put(E e) throws InterruptedException {
         lock.lock();
         try{
-            while(queue.size() == max){
-                notFullQueue.await();
-            }
             queue.add(e);
-            notEmptyQueue.signalAll();
+            if(readyMachines.size()>0){
+                Simulator.getInstance().getMachine(readyMachines.peekFirst()).notifyProcessingState();
+            }
         }
         finally{
             lock.unlock();
         }
     }
-    public E take() throws InterruptedException {
+    public void PutMachineToSleep(int ID) throws InterruptedException {
         lock.lock();
         try{
-            while(queue.size()==0){
-                notEmptyQueue.await();
+            while(readyMachines.contains(ID)){
+                WakeMachinesUp.await();
             }
-            E item = queue.remove();
-            notFullQueue.signalAll();
-            return item;
         }
         finally{
             lock.unlock();
+        }
+    }
+    public E send(){
+        lock.lock();
+        try{
+        return queue.remove();
+        }
+        finally{
+        lock.unlock(); 
         }
     }
     public int size(){
-        return queue.size();
+        lock.lock();
+        try{return queue.size();}
+        finally{lock.unlock();}
+        
     }
     public E peek(){
-        return queue.peek();
+        lock.lock();
+        try{return queue.peek();}
+        finally{lock.unlock();}
+        
     }
 }

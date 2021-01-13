@@ -2,7 +2,7 @@ package com.example.backend;
 
 
 public class Queue {
-	BlockingQueue<Product> allProducts = new BlockingQueue<Product>(Integer.MAX_VALUE);
+	BlockingQueue<Product> allProducts = new BlockingQueue<Product>();
 	boolean isEndQueue=false;
 	private int ID;
 
@@ -20,14 +20,15 @@ public class Queue {
 		this.ID = ID;
 		this.isEndQueue=isEndQueue;
 	}
-    public Product sendProduct(){
-        try {
-			Product product = allProducts.take(); 
-			return product;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-        return null;
+	public void notifyReadyState(int ID){
+		allProducts.addToReadyMachines(ID);
+	}
+	public void notifyProcessingState(int ID){
+		allProducts.removeFromReadyMachines(ID);
+	}
+    public Product sendProduct(int ID){
+		Product product = allProducts.send(); 
+		return product;
     }
     public void receiveProduct(Product product){
         try {
