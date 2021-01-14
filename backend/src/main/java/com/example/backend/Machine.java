@@ -18,11 +18,11 @@ public class Machine extends TimerTask {
 		this.ID = ID;
 		this.fromQueues = fromQueues;
 		this.toQueue = toQueue;
-		this.processTime = (2 + new Random().nextInt(10)) * 1000;
+		this.processTime = (2 + new Random().nextInt(5)) * 1000;
 	}
 
 	// Tries to send the product to all receiver queues (the first empty will get
-	// it) Note:needs furthure test
+	// it) 
 	public void sendProduct(Queue queue) {
 		try {
 			queue.receiveProduct(product);
@@ -33,7 +33,7 @@ public class Machine extends TimerTask {
 	}
 
 	// Tries to receive the product from all sender queues (the first non-emprt will
-	// send it) Note:needs furthure test
+	// send it) 
 	public void receiveProduct(Queue queue) {
 		try {
 			Product product = queue.sendProduct(this.ID);

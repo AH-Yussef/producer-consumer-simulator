@@ -22,7 +22,6 @@ public class Simulator {
     private ScheduledExecutorService productTimer;
     private HashMap<Integer, Machine> allMachines = new HashMap<Integer, Machine>();
     private HashMap<Integer, Queue> allQueues = new HashMap<Integer, Queue>();
-    //private HashSet<String> presentColors = new HashSet<String>();
 
     private String colorsArray[] = {"198,212,177",
     "42,222,240",
