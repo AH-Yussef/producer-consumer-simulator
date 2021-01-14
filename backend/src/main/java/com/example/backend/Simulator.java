@@ -161,7 +161,6 @@ public class Simulator {
         this.allQueues.clear();
         if(productTimer != null) this.productTimer.shutdown();
         this.isSimulationOver = false;
-        //this.presentColors.clear();
         this.mementoCollector.reset();
     }
     /*

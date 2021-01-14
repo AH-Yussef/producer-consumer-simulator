@@ -21,21 +21,4 @@ public class MementoCollector{
         this.mementoMap.clear();
         this.secondsCount = 1;
     }
-
-//    public static void main(String[] args) {
-//        Memento str1;
-//        str1.setMementoMachineState("shosh 1");
-//        Memento str2;
-//        str1.setMementoMachineState("shosh 2");
-//        Memento str3;
-//        str1.setMementoMachineState("shosh 3");
-//        Memento str4;
-//        str1.setMementoMachineState("shosh 4");
-//
-//        MementoCollector collector ;
-//        collector.appendToMementoMap(str1);
-//        collector.appendToMementoMap(str2);
-//        collector.appendToMementoMap(str3);
-//        collector.appendToMementoMap(str4);
-//    }
 }
