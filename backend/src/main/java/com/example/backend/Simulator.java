@@ -186,15 +186,7 @@ public class Simulator {
         productTimer.scheduleWithFixedDelay(inputProduct, 0, inputRate, TimeUnit.MILLISECONDS);
         
     }
-
-    // //checking if color already exists
-    // public boolean colorUsed(String color){
-    //     return presentColors.contains(color);
-    // }
-    // //adds color to the set
-    // public void addColor(String color){
-    //     this.presentColors.add(color);
-    // }
+    
     public String getNewColor(){
         return this.colorsArray[(this.colorIndex++)%this.colorsArray.length];
     }
@@ -232,7 +224,7 @@ public class Simulator {
 
 
 
-     //testing
+     //setting up components
      public Machine[] setupMachines(String jsonStr){
 	     MachineInfo[] machinesInfo = jsonConverter.jsonToMachineInfo(jsonStr);
 	     Machine[] allMachines = new Machine[machinesInfo.length];

@@ -59,9 +59,6 @@ export default {
         const machinesJson = this.getMachinesInfo();
         const productsNumber = this.getProductsNumber();
 
-        console.log(queuesJson);
-        console.log(machinesJson);
-
         this.disableInput();
         document.getElementById("board").style.pointerEvents = 'none';
 
@@ -165,7 +162,6 @@ export default {
     refreshCircuit() {
       axios.get('http://localhost:8085//getCurrentImage')
       .then( (response) => {
-        console.log(response.data);
         this.updateCircuit(response.data);
 
         this.isSimulationOver();
